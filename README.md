@@ -1,36 +1,154 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Swakarsa Digital Platform (Monorepo)
 
-## Getting Started
+Platform digital terintegrasi untuk Swakarsa Digital Agency & Freelancer Guild.
 
-First, run the development server:
+Proyek ini telah direfaktor dari arsitektur Monolithic Landing Page menjadi Next.js App Router Monorepo yang memisahkan area publik (Agency) dan area privat (Platform Aplikasi) menggunakan database PostgreSQL.
 
-```bash
+🏗 Tech Stack
+
+Framework: Next.js 15 (App Router)
+
+Language: TypeScript
+
+Styling: Tailwind CSS + Framer Motion
+
+Database: PostgreSQL (via Neon / Local)
+
+ORM: Prisma
+
+Auth: NextAuth.js v5 (Beta)
+
+Icons: Lucide React
+
+✅ Progress: Fitur yang Sudah Selesai (Completed)
+
+Berdasarkan Tech Guide v3.1, kita telah menyelesaikan Phase 1 (Foundation) dan sebagian Phase 2 (Platform Core).
+
+1. Arsitektur & Database
+
+[x] Route Groups: Implementasi struktur folder (agency) untuk publik dan (platform) untuk aplikasi.
+
+[x] Database Schema: Model Prisma lengkap untuk User, HeroProfile, TeamMember, Portfolio, Skills, dan JobApplication.
+
+[x] Seeding Script: Script otomatis (prisma/seed.ts) untuk mengisi data awal Admin, Tim, dan Portfolio.
+
+2. Module Agency (Public Website)
+
+Semua halaman publik kini bersifat Dinamis (Server Components) yang mengambil data langsung dari Database.
+
+[x] Home Page: Refactoring UI menjadi komponen modular (Hero, Stats, Services).
+
+[x] Dynamic Portfolio: Halaman /portfolio menampilkan semua proyek dari DB.
+
+[x] Dynamic Team: Halaman /team menampilkan semua anggota tim dari DB.
+
+[x] Jobs / Arise MVP: Halaman /jobs dengan formulir pelamaran kerja yang menyimpan data pelamar ke tabel JobApplication.
+
+3. Module Platform (Private App)
+
+Sistem autentikasi dan dashboard dasar telah dibangun.
+
+[x] Authentication: Login aman menggunakan NextAuth v5 + Bcrypt (Password Hashing).
+
+[x] Middleware Protection: Melindungi rute /lab dan /guild dari akses tanpa login.
+
+[x] Login Page: UI Login khusus yang terpisah dari layout platform.
+
+[x] Dashboard "The Lab": Tampilan Dashboard untuk Klien (Status proyek, XP, Rank).
+
+[x] Dashboard "The Guild": Tampilan Dashboard untuk Konsultan (Active Quests).
+
+[x] Layouting: Sidebar navigasi khusus platform dengan fitur Sign Out.
+
+🚀 Roadmap: Fitur yang Belum / Perlu Dikerjakan (To-Do)
+
+Berikut adalah fitur dari Tech Guide yang perlu dikerjakan selanjutnya:
+
+1. Integrasi Email & Notifikasi
+
+[ ] Resend Integration: Menghubungkan API Resend di lib/actions.ts agar saat ada pelamar kerja (Jobs) atau pesan kontak, email notifikasi benar-benar terkirim ke Admin.
+
+[ ] User Welcome Email: Kirim email otomatis saat user baru didaftarkan.
+
+2. Fitur "The Brain" (AI)
+
+[ ] OpenAI Integration: Menghubungkan API OpenAI untuk fitur rekomendasi tim otomatis di Dashboard Klien.
+
+[ ] Quest Generation: Menggunakan AI untuk men-generate deskripsi tugas (Quest) dari brief proyek.
+
+3. Manajemen Proyek (CRUD)
+
+Saat ini Dashboard hanya menampilkan data dummy/kosong ("0 Active Projects").
+
+[ ] Create Project UI: Form bagi Admin/Klien untuk memulai proyek baru di "The Lab".
+
+[ ] Assign Quest: Fitur bagi Admin untuk memecah proyek menjadi Quest dan menugaskannya ke member (The Guild).
+
+[ ] Progress Tracking: Mengupdate status proyek secara real-time.
+
+4. Admin Panel & Settings
+
+[ ] Applicant Viewer: Halaman khusus admin untuk melihat daftar pelamar kerja (JobApplication) tanpa membuka Prisma Studio.
+
+[ ] Profile Settings: Halaman /settings untuk mengubah password atau foto profil.
+
+🛠 Cara Menjalankan Project
+
+1. Persiapan Environment
+
+Pastikan file .env memiliki variabel berikut:
+
+DATABASE_URL="postgresql://..."
+AUTH_SECRET="string_acak_untuk_enkripsi"
+AUTH_URL="http://localhost:3000"
+# RESEND_API_KEY="..." (Nanti)
+# OPENAI_API_KEY="..." (Nanti)
+
+
+2. Instalasi & Database
+
+# Install dependensi
+npm install
+
+# Sinkronisasi Database (Membuat Tabel)
+npx prisma db push
+
+# Isi Data Awal (Admin & Content)
+npx tsx prisma/seed.ts
+
+
+3. Menjalankan Server
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Akses website di http://localhost:3000.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Akun Login (Admin)
 
-## Learn More
+Gunakan akun ini untuk masuk ke Dashboard:
 
-To learn more about Next.js, take a look at the following resources:
+Email: admin@swakarsa.id
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Password: admin123
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+📂 Struktur Folder Baru
 
-## Deploy on Vercel
+app/
+├── (agency)/           # Area Publik (Navbar & Footer Website)
+│   ├── portfolio/      # Halaman Portfolio Dinamis
+│   ├── team/           # Halaman Team Dinamis
+│   ├── jobs/           # Halaman Lowongan Kerja (Form)
+│   └── page.tsx        # Halaman Utama (Landing Page)
+├── (platform)/         # Area Private (Sidebar Dashboard)
+│   ├── lab/            # Dashboard Client
+│   └── guild/          # Dashboard Consultant
+├── api/auth/           # Endpoint NextAuth
+├── login/              # Halaman Login (Standalone)
+├── components/         
+│   ├── agency/         # Komponen UI Website (Hero, Stats, dll)
+│   └── platform/       # Komponen UI App (Sidebar, LoginForm)
+└── lib/                # Konfigurasi Backend (Prisma, Auth Actions)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+© 2025 Swakarsa Digital. All Rights Reserved.
