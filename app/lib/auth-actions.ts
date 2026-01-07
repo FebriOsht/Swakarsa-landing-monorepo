@@ -1,31 +1,50 @@
-'use server'
+'use server';
 
-import { signIn } from '@/auth'
-import { AuthError } from 'next-auth'
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
+import { prisma } from '@/app/lib/prisma'; // Pastikan path import ini sesuai
 
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData,
 ) {
   try {
-    // Kita ubah FormData menjadi object biasa agar bisa menambahkan properti 'redirectTo'
-    const data = Object.fromEntries(formData);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
 
-    // Login menggunakan credentials dan paksa redirect ke '/lab'
+    // 1. SMART REDIRECT: Cek Role dulu sebelum login
+    // Kita intip database sebentar untuk tahu siapa yang mau masuk
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { role: true }
+    });
+
+    let destination = '/lab'; // Default landing page (untuk CLIENT)
+
+    if (user) {
+      if (user.role === 'ADMIN') {
+        destination = '/admin';      // Redirect Admin
+      } else if (user.role === 'CONSULTANT') {
+        destination = '/guild';      // Redirect Konsultan
+      }
+    }
+
+    // 2. Eksekusi Login NextAuth dengan tujuan spesifik
     await signIn('credentials', {
-      ...data,
-      redirectTo: '/lab', 
-    })
+      email,
+      password,
+      redirectTo: destination, // <-- Ini kuncinya!
+    });
+
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'Invalid credentials. Please check your email and password.'
+          return 'Email atau Password salah.';
         default:
-          return 'Something went wrong. Please try again.'
+          return 'Terjadi kesalahan sistem.';
       }
     }
-    // Error redirect (NEXT_REDIRECT) harus dilempar ulang agar navigasi berjalan
-    throw error 
+    throw error;
   }
 }

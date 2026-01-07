@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
-import { prisma } from './app/lib/prisma'; 
+import { prisma } from '@/app/lib/prisma'; 
 import bcrypt from 'bcryptjs';
 
 // Skema validasi untuk memastikan input aman sebelum diproses ke DB
@@ -29,11 +29,12 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           if (!user) return null;
 
           // 3. Cek kecocokan password dengan yang ada di DB (sudah di-hash)
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-
-          if (passwordsMatch) {
-            // Jika cocok, kembalikan objek user
-            return user;
+          if (user.password) {
+             const passwordsMatch = await bcrypt.compare(password, user.password);
+             if (passwordsMatch) {
+               // Jika cocok, kembalikan objek user
+               return user;
+             }
           }
         }
 
@@ -42,4 +43,23 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
       },
     }),
   ],
+  // === BAGIAN PENTING: AGAR ID USER TERBAWA SAAT LOGIN ===
+  callbacks: {
+    // 1. Saat login sukses, simpan ID & Role ke Token JWT
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+      return token;
+    },
+    // 2. Saat session dibaca di server/client, ambil ID & Role dari Token
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+  },
 });

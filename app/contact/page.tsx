@@ -1,12 +1,13 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, Globe, Send, RefreshCw, ArrowLeft, MapPin, MessageSquare } from "lucide-react";
-import { useEffect, useRef, useState, memo } from "react";
+import { motion } from "framer-motion";
+import { Mail, Phone, Globe, Send, ArrowLeft, MapPin, MessageSquare, CheckCircle, AlertCircle } from "lucide-react";
+import { useState, memo } from "react";
+import { submitContactForm } from "@/app/lib/actions"; // Import Server Action kita
 
 // ================= OPTIMIZED SUB-COMPONENTS =================
 
-// Memoized Background Component
+// Memoized Background Component (Tetap sama seperti sebelumnya)
 const BackgroundEffects = memo(() => (
   <div className="fixed pointer-events-none inset-0 overflow-hidden z-0">
     <motion.div
@@ -19,13 +20,8 @@ const BackgroundEffects = memo(() => (
         repeat: Infinity,
         ease: "linear",
       }}
-      className="absolute -top-40 left-1/4 -translate-x-1/2
-      w-[600px] h-[600px]
-      bg-gradient-to-tr from-indigo-500/10 via-purple-500/5 to-pink-500/10
-      rounded-full blur-[120px]"
-      style={{ willChange: "transform, opacity" }}
+      className="absolute -top-40 left-1/4 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-500/10 via-purple-500/5 to-pink-500/10 rounded-full blur-[120px]"
     />
-
     <motion.div
       animate={{
         scale: [1.1, 1, 1.1],
@@ -36,97 +32,34 @@ const BackgroundEffects = memo(() => (
         repeat: Infinity,
         ease: "easeInOut",
       }}
-      className="absolute -bottom-40 -right-20
-      w-[500px] h-[500px]
-      bg-gradient-to-tr from-cyan-400/5 to-blue-500/5
-      rounded-full blur-[100px]"
-      style={{ willChange: "transform, opacity" }}
+      className="absolute -bottom-40 -right-20 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-400/5 to-blue-500/5 rounded-full blur-[100px]"
     />
   </div>
 ));
 
 BackgroundEffects.displayName = 'BackgroundEffects';
 
-const WHATSAPP_NUMBER = "6282279513201";
-const RATE_LIMIT_KEY = "wa_last_submit";
-const RATE_LIMIT_TIME = 60 * 1000; // 1 minute
-
 export default function ContactPage() {
-  const [loading, setLoading] = useState(false);
-  const startTimeRef = useRef<number>(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formStatus, setFormStatus] = useState<{ success?: boolean; message?: string } | null>(null);
 
-  // State for Captcha
-  const [captcha, setCaptcha] = useState({ num1: 0, num2: 0 });
-  const [userAnswer, setUserAnswer] = useState("");
+  // Handler untuk Form Submission via Server Action
+  async function clientAction(formData: FormData) {
+    setIsSubmitting(true);
+    setFormStatus(null);
 
-  // Function to generate random numbers for captcha
-  const generateCaptcha = () => {
-    setCaptcha({
-      num1: Math.floor(Math.random() * 10) + 1,
-      num2: Math.floor(Math.random() * 10) + 1,
-    });
-    setUserAnswer("");
-  };
+    // Panggil fungsi backend
+    const result = await submitContactForm(formData);
 
-  useEffect(() => {
-    startTimeRef.current = Date.now();
-    generateCaptcha();
-  }, []);
+    setIsSubmitting(false);
+    setFormStatus(result);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const now = Date.now();
-
-    /* 1. RATE LIMIT */
-    const lastSubmit = localStorage.getItem(RATE_LIMIT_KEY);
-    if (lastSubmit && now - Number(lastSubmit) < RATE_LIMIT_TIME) {
-      alert("Mohon tunggu 1 menit sebelum mengirim pesan lagi.");
-      setLoading(false);
-      return;
+    // Jika sukses, reset form
+    if (result.success) {
+      const form = document.getElementById("contact-form") as HTMLFormElement;
+      if (form) form.reset();
     }
-
-    /* 2. MINIMUM TIME CHECK (Anti-Bot) */
-    if (now - startTimeRef.current < 3000) {
-      console.warn("Spam detected: Terlalu cepat.");
-      setLoading(false);
-      return;
-    }
-
-    const formData = new FormData(e.currentTarget);
-
-    /* 3. HONEYPOT CHECK */
-    if (formData.get("company")) {
-      console.warn("Honeypot triggered");
-      setLoading(false);
-      return;
-    }
-
-    /* 4. MATH CAPTCHA CHECK */
-    if (parseInt(userAnswer) !== captcha.num1 + captcha.num2) {
-      alert("Jawaban keamanan salah. Silakan coba lagi.");
-      generateCaptcha();
-      setLoading(false);
-      return;
-    }
-
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const message = formData.get("message");
-
-    const text = `Halo Swakarsa 👋\n\nNama: ${name}\nEmail: ${email}\n\nPesan:\n${message}`;
-
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-
-    localStorage.setItem(RATE_LIMIT_KEY, now.toString());
-    window.open(url, "_blank");
-
-    setLoading(false);
-    (e.target as HTMLFormElement).reset();
-    generateCaptcha(); // Reset captcha after submit
-    startTimeRef.current = Date.now();
-  };
+  }
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden relative">
@@ -169,7 +102,7 @@ export default function ContactPage() {
               </span>
             </h1>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-              Ready to start your digital transformation? Contact our team directly via WhatsApp for a faster response.
+              Ready to start your digital transformation? Send us a message and we'll reply via Email within 24 hours.
             </p>
           </motion.div>
         </div>
@@ -197,7 +130,7 @@ export default function ContactPage() {
                         title="WhatsApp" 
                         text="+62 822-7951-3201" 
                         subtext="Fast response (09:00 - 17:00 WIB)"
-                        href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                        href="https://wa.me/6282279513201"
                     />
                     <InfoCard 
                         icon={<Globe size={24} />} 
@@ -230,15 +163,16 @@ export default function ContactPage() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <form
-              onSubmit={handleSubmit}
+              id="contact-form"
+              action={clientAction}
               className="rounded-3xl bg-white/5 border border-white/10 p-8 backdrop-blur-md shadow-2xl relative overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
               
               <h3 className="text-2xl font-bold mb-2 text-white">Send a Message</h3>
-              <p className="text-slate-400 mb-8 text-sm">Fill out the form below and we'll direct you to WhatsApp.</p>
+              <p className="text-slate-400 mb-8 text-sm">We'll respond to your email as soon as possible.</p>
 
-              {/* 🔒 HONEYPOT (HIDDEN) */}
+              {/* 🔒 HONEYPOT (HIDDEN) - Sesuai dengan actions.ts */}
               <input
                 type="text"
                 name="company"
@@ -252,45 +186,31 @@ export default function ContactPage() {
                 <Input label="Email Address" name="email" type="email" placeholder="john@example.com" />
                 <Textarea label="Message" name="message" placeholder="Tell us about your project..." />
 
-                {/* 🧩 MATH CAPTCHA UI */}
-                <div className="p-4 bg-black/40 rounded-2xl border border-white/10">
-                  <label className="text-xs text-slate-400 block mb-3 uppercase tracking-wider font-bold">
-                    Security Check
-                  </label>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-xl font-mono text-xl text-indigo-400 border border-white/10 min-w-[120px] justify-center">
-                      <span>{captcha.num1}</span>
-                      <span className="text-slate-500">+</span>
-                      <span>{captcha.num2}</span>
-                      <span className="text-slate-500">=</span>
-                    </div>
-                    <input
-                      type="number"
-                      required
-                      value={userAnswer}
-                      onChange={(e) => setUserAnswer(e.target.value)}
-                      placeholder="?"
-                      className="w-20 px-4 py-3 rounded-xl bg-white/10 border border-white/10 focus:ring-2 focus:ring-indigo-500 outline-none text-center text-white font-bold placeholder-slate-600 transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={generateCaptcha}
-                      className="p-3 hover:bg-white/10 rounded-xl transition-colors text-slate-400 hover:text-white"
-                      title="Refresh Captcha"
-                    >
-                      <RefreshCw size={20} />
-                    </button>
-                  </div>
-                </div>
+                {/* Status Message (Success/Error) */}
+                {formStatus && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-4 rounded-xl flex items-center gap-3 ${
+                      formStatus.success 
+                        ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                        : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                    }`}
+                  >
+                    {formStatus.success ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+                    <p className="text-sm font-medium">{formStatus.message}</p>
+                  </motion.div>
+                )}
 
                 <button
-                  disabled={loading}
+                  disabled={isSubmitting}
+                  type="submit"
                   className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 font-bold text-white shadow-lg shadow-indigo-500/25 disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98] mt-4"
                 >
-                  {loading ? (
+                  {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Opening WhatsApp...</span>
+                      <span>Sending Message...</span>
                     </>
                   ) : (
                     <>
@@ -333,7 +253,7 @@ export default function ContactPage() {
 }
 
 /* =========================
-   COMPONENTS
+   COMPONENTS (Sama seperti sebelumnya)
 ========================= */
 
 const InfoCard = ({ icon, title, text, subtext, href }: any) => {

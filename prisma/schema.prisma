@@ -1,16 +1,15 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql" // [cite: 157]
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// === MODULE: AGENCY (PUBLIC WEBSITE) ===
-// Untuk menggantikan hardcoded data di page.tsx
+// ==========================================
+// MODULE 1: AGENCY (PUBLIC WEBSITE)
+// ==========================================
 
 model TeamMember {
   id          String   @id @default(cuid())
@@ -28,7 +27,7 @@ model Skill {
   image            String
   shortDescription String
   description      String   @db.Text
-  techStack        String[] // Array of strings for tags
+  techStack        String[]
   features         String[]
   useCases         String[]
 }
@@ -44,25 +43,35 @@ model PortfolioProject {
   duration         String
   challenges       String[]
   solutions        String[]
-  results          Json     // Simpan array object {value, label} sebagai JSON
+  results          Json     // Array object {value, label}
   techStack        String[]
   createdAt        DateTime @default(now())
 }
 
-model JobApplication { // [cite: 251]
-  id             String    @id @default(cuid())
-  fullName       String
-  email          String
-  phone          String
-  location       String
-  hasWorkspace   Boolean
-  experience     String?   @db.Text
-  status         String    @default("NEW")
-  createdAt      DateTime  @default(now())
+model JobApplication {
+  id           String   @id @default(cuid())
+  fullName     String
+  email        String
+  phone        String
+  location     String
+  hasWorkspace Boolean
+  experience   String?  @db.Text
+  status       String   @default("NEW")
+  createdAt    DateTime @default(now())
 }
 
-// === MODULE: PLATFORM (AUTH & APP) ===
-// Sesuai Tech Guide v3.1 [cite: 166-240]
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  status    String   @default("UNREAD")
+  createdAt DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 2: PLATFORM (CORE & AUTH)
+// ==========================================
 
 enum Role {
   CLIENT
@@ -72,47 +81,77 @@ enum Role {
 
 model User {
   id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
   name          String?
+  email         String?   @unique
+  password      String?
   role          Role      @default(CLIENT)
-  createdAt     DateTime  @default(now())
+  image         String?
   
-  // Relations
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // --- RELATIONS ---
+  
+  // 1. Profil Konsultan (RPG Stats)
   heroProfile   HeroProfile?
-  projects      Project[]
-  assignedQuests Quest[]
+  
+  // 2. Project yang DIBUAT oleh Client ini (The Lab)
+  clientProjects ClientProject[] @relation("ClientOwner")
+  
+  // 3. Project dimana User ini menjadi ANGGOTA TIM (The Guild)
+  consultantProjects ProjectMember[] @relation("ConsultantMember")
+
+  // (Optional: Future "Quest" system bisa ditambahkan nanti disini)
 }
 
 model HeroProfile {
   id            String  @id @default(cuid())
   userId        String  @unique
   user          User    @relation(fields: [userId], references: [id])
+  
   nickname      String
-  tier          String  @default("BRONZE") // Simplified enum for now
+  tier          String  @default("BRONZE")
   statSpeed     Int     @default(5)
   statLogic     Int     @default(5)
   statAesthetic Int     @default(5)
   xp            Int     @default(0)
 }
 
-model Project {
+// ==========================================
+// MODULE 3: THE LAB (PROJECT DRAFTING)
+// ==========================================
+
+// Project yang dibuat oleh Client via Drag & Drop
+model ClientProject {
   id          String   @id @default(cuid())
   name        String
+  description String?
+  status      String   @default("DRAFT") // DRAFT, NEGOTIATION, ACTIVE, COMPLETED
+  totalRate   Int      // Estimasi biaya per bulan
+  
+  // Pemilik (Client)
   clientId    String
-  client      User     @relation(fields: [clientId], references: [id])
-  status      String   @default("DRAFTING")
-  quests      Quest[]
+  client      User     @relation("ClientOwner", fields: [clientId], references: [id])
+  
+  // Anggota Tim (Konsultan)
+  members     ProjectMember[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
-model Quest {
-  id           String   @id @default(cuid())
-  title        String
-  description  String
-  loot         Float
-  xpReward     Int
-  projectId    String
-  project      Project  @relation(fields: [projectId], references: [id])
-  assignedToId String?
-  assignedTo   User?    @relation(fields: [assignedToId], references: [id])
+// Tabel Hubung (Many-to-Many) antara Project dan Konsultan
+model ProjectMember {
+  id        String        @id @default(cuid())
+  
+  // Link ke Project
+  projectId String
+  project   ClientProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  // Link ke Konsultan (Hero)
+  heroId    String
+  hero      User          @relation("ConsultantMember", fields: [heroId], references: [id])
+  
+  role      String?       // Role spesifik di project ini (misal: "Lead Frontend")
+  joinedAt  DateTime      @default(now())
 }

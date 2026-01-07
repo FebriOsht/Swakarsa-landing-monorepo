@@ -1,10 +1,14 @@
-Swakarsa Digital Platform (Monorepo)
+Swakarsa Digital Platform (Monorepo) v1.2 🚀
 
-Platform digital terintegrasi untuk Swakarsa Digital Agency & Freelancer Guild.
+Status Project: Phase 2 (Platform Core) - COMPLETED (MVP)
+Last Update: Januari 2026
+Version: 1.2 (Final Core Features)
 
-Proyek ini telah direfaktor dari arsitektur Monolithic Landing Page menjadi Next.js App Router Monorepo yang memisahkan area publik (Agency) dan area privat (Platform Aplikasi) menggunakan database PostgreSQL.
+Platform digital terintegrasi untuk Swakarsa Digital Agency & Freelancer Guild. Project ini menggunakan arsitektur Next.js App Router Monorepo yang memisahkan area publik (Agency) dan area privat (Platform Aplikasi) dengan sistem keamanan berbasis peran (RBAC).
 
-🏗 Tech Stack
+🛠 Tech Stack
+
+Aplikasi ini dibangun dengan teknologi modern untuk performa dan skalabilitas:
 
 Framework: Next.js 15 (App Router)
 
@@ -12,143 +16,237 @@ Language: TypeScript
 
 Styling: Tailwind CSS + Framer Motion
 
-Database: PostgreSQL (via Neon / Local)
+Database: PostgreSQL (via Prisma ORM)
 
-ORM: Prisma
+Auth: NextAuth.js v5 (Credentials + Smart Redirect + RBAC)
 
-Auth: NextAuth.js v5 (Beta)
+Core Libraries:
 
-Icons: Lucide React
+@dnd-kit: Logika Drag & Drop untuk "The Lab".
 
-✅ Progress: Fitur yang Sudah Selesai (Completed)
+lucide-react: Icon set modern.
 
-Berdasarkan Tech Guide v3.1, kita telah menyelesaikan Phase 1 (Foundation) dan sebagian Phase 2 (Platform Core).
+resend: Integrasi Email Transaksional (Mockup Ready).
 
-1. Arsitektur & Database
+bcryptjs: Security hashing untuk password user.
 
-[x] Route Groups: Implementasi struktur folder (agency) untuk publik dan (platform) untuk aplikasi.
+📖 Cara Kerja Sistem (Alur 3 Pilar)
 
-[x] Database Schema: Model Prisma lengkap untuk User, HeroProfile, TeamMember, Portfolio, Skills, dan JobApplication.
+Aplikasi ini menghubungkan 3 peran pengguna (Role) dalam satu ekosistem kerja:
 
-[x] Seeding Script: Script otomatis (prisma/seed.ts) untuk mengisi data awal Admin, Tim, dan Portfolio.
+1. 💼 Client (Klien) - "The Creator"
 
-2. Module Agency (Public Website)
+Akses: /lab
 
-Semua halaman publik kini bersifat Dinamis (Server Components) yang mengambil data langsung dari Database.
+Alur Kerja:
 
-[x] Home Page: Refactoring UI menjadi komponen modular (Hero, Stats, Services).
+Login dan masuk ke Dashboard The Lab.
 
-[x] Dynamic Portfolio: Halaman /portfolio menampilkan semua proyek dari DB.
+Membuat proyek baru di menu "Drafting Board".
 
-[x] Dynamic Team: Halaman /team menampilkan semua anggota tim dari DB.
+Menggunakan Drag & Drop untuk memilih tim (Hero) dari daftar konsultan ("The Bench").
 
-[x] Jobs / Arise MVP: Halaman /jobs dengan formulir pelamaran kerja yang menyimpan data pelamar ke tabel JobApplication.
+Melihat estimasi biaya bulanan (Burn Rate) secara real-time.
 
-3. Module Platform (Private App)
+Menekan tombol "Hire Squad" untuk menyimpan proyek.
 
-Sistem autentikasi dan dashboard dasar telah dibangun.
+Status awal proyek: NEGOTIATION (Menunggu persetujuan Admin).
 
-[x] Authentication: Login aman menggunakan NextAuth v5 + Bcrypt (Password Hashing).
+2. 👑 Admin (Pemilik) - "The Approver"
 
-[x] Middleware Protection: Melindungi rute /lab dan /guild dari akses tanpa login.
+Akses: /admin
 
-[x] Login Page: UI Login khusus yang terpisah dari layout platform.
+Alur Kerja:
 
-[x] Dashboard "The Lab": Tampilan Dashboard untuk Klien (Status proyek, XP, Rank).
+Melihat statistik global (Pesan Masuk, Pelamar Kerja, Total Proyek).
 
-[x] Dashboard "The Guild": Tampilan Dashboard untuk Konsultan (Active Quests).
+Memantau daftar "Project Requests" yang diajukan Klien.
 
-[x] Layouting: Sidebar navigasi khusus platform dengan fitur Sign Out.
+Menekan tombol "Activate" pada proyek yang statusnya NEGOTIATION.
 
-🚀 Roadmap: Fitur yang Belum / Perlu Dikerjakan (To-Do)
+Status proyek berubah menjadi ACTIVE.
 
-Berikut adalah fitur dari Tech Guide yang perlu dikerjakan selanjutnya:
+3. ⚔️ Consultant (Tim/Hero) - "The Executor"
 
-1. Integrasi Email & Notifikasi
+Akses: /guild
 
-[ ] Resend Integration: Menghubungkan API Resend di lib/actions.ts agar saat ada pelamar kerja (Jobs) atau pesan kontak, email notifikasi benar-benar terkirim ke Admin.
+Alur Kerja:
 
-[ ] User Welcome Email: Kirim email otomatis saat user baru didaftarkan.
+Login (Hanya bisa jika akunnya sudah dimasukkan ke dalam Squad oleh Klien).
 
-2. Fitur "The Brain" (AI)
+Masuk ke The Guild Hall.
 
-[ ] OpenAI Integration: Menghubungkan API OpenAI untuk fitur rekomendasi tim otomatis di Dashboard Klien.
+Melihat daftar proyek aktif di mana dia ditugaskan.
 
-[ ] Quest Generation: Menggunakan AI untuk men-generate deskripsi tugas (Quest) dari brief proyek.
+Klik "View Quest" untuk melihat detail misi (Briefing & Rekan Tim).
 
-3. Manajemen Proyek (CRUD)
+✅ Progress Log (Laporan Pengerjaan)
 
-Saat ini Dashboard hanya menampilkan data dummy/kosong ("0 Active Projects").
+Berikut adalah rekapitulasi fitur yang sudah dikerjakan dari versi awal hingga sekarang.
 
-[ ] Create Project UI: Form bagi Admin/Klien untuk memulai proyek baru di "The Lab".
+🟢 Phase 1: Foundation & Agency (Selesai di v1.0)
 
-[ ] Assign Quest: Fitur bagi Admin untuk memecah proyek menjadi Quest dan menugaskannya ke member (The Guild).
+Fokus pada halaman publik (Marketing) dan struktur database.
 
-[ ] Progress Tracking: Mengupdate status proyek secara real-time.
+[x] Route Groups: Pemisahan folder (agency) vs (platform).
 
-4. Admin Panel & Settings
+[x] Database Schema: Model Prisma lengkap (User, Hero, Project, Team, dll).
 
-[ ] Applicant Viewer: Halaman khusus admin untuk melihat daftar pelamar kerja (JobApplication) tanpa membuka Prisma Studio.
+[x] Seeding Script: Script otomatis pengisi data awal (seed.ts).
 
-[ ] Profile Settings: Halaman /settings untuk mengubah password atau foto profil.
+[x] Public Pages: Home, Portfolio, Team (Data dinamis dari DB).
 
-🛠 Cara Menjalankan Project
+[x] Arise (Jobs): Form lamaran kerja yang menyimpan data ke DB.
 
-1. Persiapan Environment
+[x] Contact: Form kontak dengan validasi & simulasi email.
 
-Pastikan file .env memiliki variabel berikut:
+🔵 Phase 2: Platform Core (Selesai di v1.2 - Hari Ini)
 
-DATABASE_URL="postgresql://..."
-AUTH_SECRET="string_acak_untuk_enkripsi"
-AUTH_URL="http://localhost:3000"
-# RESEND_API_KEY="..." (Nanti)
-# OPENAI_API_KEY="..." (Nanti)
+Fokus pada logika bisnis aplikasi, dashboard, dan keamanan.
 
+[x] Smart Authentication:
 
-2. Instalasi & Database
+Login System dengan Role-Based Access Control (RBAC).
 
-# Install dependensi
+Smart Redirect: Admin -> /admin, Client -> /lab, Consultant -> /guild.
+
+Security Middleware: Mencegah Konsultan masuk ke area Klien, dan sebaliknya.
+
+[x] The Lab (Client Area):
+
+Drafting Board: Drag & Drop Team Builder fungsional.
+
+Checkout: Menyimpan komposisi tim ke Database (ClientProject).
+
+Dashboard: Monitoring status proyek & biaya.
+
+Project Detail: Halaman detail status & timeline proyek.
+
+[x] The Guild (Consultant Area):
+
+Personal Dashboard: Hanya menampilkan proyek yang ditugaskan ke user tersebut.
+
+Quest Detail View: Halaman detail misi (Briefing Mode).
+
+[x] Admin Command Center:
+
+Approval Workflow: Mengubah status project menjadi ACTIVE.
+
+Monitoring: Melihat Inbox Pesan & Pelamar Kerja.
+
+[x] Settings Module (New):
+
+Update Profil (Nama).
+
+Real Password Change: Fitur ganti password aman dengan hashing bcrypt.
+
+🚧 Next Steps (Roadmap v2.0)
+
+Fitur-fitur ini belum diimplementasikan dan masuk ke rencana pengembangan tahap selanjutnya:
+
+[ ] Detailed Quest System: Memecah "Project" menjadi tiket tugas kecil (To-Do List).
+
+[ ] The Brain (AI): Integrasi OpenAI untuk "Ask Swakarsa" (Estimasi harga otomatis).
+
+[ ] Payment Gateway: Integrasi Midtrans/Xendit untuk pembayaran invoice Klien.
+
+[ ] File Upload: Upload CV & Foto Profil ke Cloud Storage (AWS S3/Uploadthing).
+
+🚀 Cara Menjalankan Project
+
+1. Instalasi & Database
+
+Pastikan PostgreSQL sudah aktif.
+
+# 1. Install dependencies
 npm install
 
-# Sinkronisasi Database (Membuat Tabel)
+# 2. Sinkronisasi Database (Membuat Tabel)
+# HATI-HATI: Perintah ini akan mereset data jika struktur berubah
 npx prisma db push
 
-# Isi Data Awal (Admin & Content)
+# 3. PENTING: Isi Data Awal (Seeding)
+# Wajib dijalankan agar akun Admin, Klien, & Konsultan tersedia
 npx tsx prisma/seed.ts
 
 
-3. Menjalankan Server
+2. Menjalankan Server Dev
 
 npm run dev
 
 
-Akses website di http://localhost:3000.
+Akses di browser: http://localhost:3000
 
-4. Akun Login (Admin)
+🔑 Akun Login (Testing Credentials)
 
-Gunakan akun ini untuk masuk ke Dashboard:
+Gunakan akun-akun berikut untuk menguji sistem (password default dari seed.ts):
 
-Email: admin@swakarsa.id
+Role
 
-Password: admin123
+Email
 
-📂 Struktur Folder Baru
+Password
+
+Akses URL
+
+Fungsi Utama
+
+ADMIN
+
+admin@swakarsa.id
+
+admin123
+
+/admin
+
+Approve Project, Monitor Inbox
+
+CLIENT
+
+client@company.com
+
+client123
+
+/lab
+
+Create Project, Hire Squad
+
+CONSULTANT
+
+ahmad@swakarsa.id
+
+hero123
+
+/guild
+
+View Assigned Quests
+
+📂 Struktur Folder Utama
 
 app/
-├── (agency)/           # Area Publik (Navbar & Footer Website)
-│   ├── portfolio/      # Halaman Portfolio Dinamis
-│   ├── team/           # Halaman Team Dinamis
-│   ├── jobs/           # Halaman Lowongan Kerja (Form)
-│   └── page.tsx        # Halaman Utama (Landing Page)
-├── (platform)/         # Area Private (Sidebar Dashboard)
-│   ├── lab/            # Dashboard Client
-│   └── guild/          # Dashboard Consultant
-├── api/auth/           # Endpoint NextAuth
-├── login/              # Halaman Login (Standalone)
-├── components/         
-│   ├── agency/         # Komponen UI Website (Hero, Stats, dll)
-│   └── platform/       # Komponen UI App (Sidebar, LoginForm)
-└── lib/                # Konfigurasi Backend (Prisma, Auth Actions)
-
-
-© 2025 Swakarsa Digital. All Rights Reserved.
+├── (agency)/               # AREA PUBLIK (Server Components)
+│   ├── home/               # Landing Page Utama
+│   ├── portfolio/          # Daftar Proyek
+│   ├── team/               # Profil Tim Inti
+│   ├── jobs/               # Form Lamaran Kerja
+│   └── contact/            # Form Kontak
+│
+├── (platform)/             # AREA PRIVAT (Login Required)
+│   ├── admin/              # Dashboard Admin
+│   ├── lab/                # Dashboard Client
+│   │   ├── draft/          # Drag & Drop Builder
+│   │   └── project/[id]/   # Detail Project
+│   ├── guild/              # Dashboard Consultant
+│   │   └── project/[id]/   # Detail Quest
+│   └── settings/           # Pengaturan Akun (Profile/Pass)
+│
+├── api/auth/               # NextAuth Endpoints
+├── components/
+│   ├── agency/             # Komponen UI Publik
+│   ├── platform/           # Komponen UI Dashboard (Sidebar)
+│   └── lab/                # Logika Drag & Drop
+│
+└── lib/
+    ├── actions.ts          # [BACKEND] Server Actions (Otak Aplikasi)
+    ├── auth.ts             # Konfigurasi Auth & Session
+    └── prisma.ts           # Koneksi Database

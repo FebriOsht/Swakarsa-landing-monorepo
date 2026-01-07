@@ -1,21 +1,43 @@
-import { getLandingPageData } from "../lib/actions";
-import HeroSection from "../components/agency/HeroSection";
-import StatsSection from "../components/agency/StatsSection"; 
-import ClientLogos from "../components/agency/ClientLogos";
-import Navbar from "../components/agency/Navbar";
+import { getLandingPageData } from "@/app/lib/actions";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
+// PERBAIKAN 1: Gunakan Default Import (tanpa kurung kurawal) untuk komponen yang satu file satu komponen
+import HeroSection from "@/app/components/agency/HeroSection";
+import StatsSection from "@/app/components/agency/StatsSection";
+import ClientLogos from "@/app/components/agency/ClientLogos";
+import Navbar from "@/app/components/agency/Navbar";
+
+// SectionComponents biasanya berisi banyak export, jadi tetap pakai Named Import
 import { 
   PortfolioSection, 
   TeamSection, 
   ServicesSection, 
   Footer 
-} from "../components/agency/SectionComponents";
+} from "@/app/components/agency/SectionComponents";
 
 // Force dynamic rendering karena kita ambil data dari DB
 export const dynamic = 'force-dynamic';
 
 export default async function AgencyHome() {
-  // 1. Fetch data dari Database (Server-side)
-  // Data ini diambil sekali di sini lalu disebar ke komponen anak (Services, Portfolio, Team)
+  // ==========================================
+  // 1. SMART REDIRECT (UX IMPROVEMENT)
+  // ==========================================
+  // Cek apakah user sudah login. Jika ya, arahkan ke dashboard masing-masing.
+  const session = await auth();
+  
+  if (session?.user) {
+    // PERBAIKAN 2: Casting 'as any' untuk menghindari error TypeScript pada properti 'role'
+    const role = (session.user as any).role;
+    
+    if (role === 'ADMIN') redirect('/admin');
+    if (role === 'CLIENT') redirect('/lab');
+    if (role === 'CONSULTANT') redirect('/guild');
+  }
+
+  // ==========================================
+  // 2. DATA FETCHING (SERVER SIDE)
+  // ==========================================
   const { team, portfolio, skills } = await getLandingPageData();
 
   return (
