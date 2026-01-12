@@ -3,16 +3,41 @@
 import { prisma } from '@/app/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { Resend } from 'resend'
-import { auth } from '@/auth' 
-import bcrypt from 'bcryptjs' // Pastikan library ini sudah diinstall (npm install bcryptjs @types/bcryptjs)
+import { auth, signIn, signOut } from '@/auth' 
+import bcrypt from 'bcryptjs' 
+import { AuthError } from "next-auth";
 
-// Inisialisasi Resend
+// Inisialisasi Resend (Opsional, hanya jika API key ada)
 const resend = process.env.RESEND_API_KEY 
   ? new Resend(process.env.RESEND_API_KEY) 
   : null;
 
 // ==========================================
-// 1. PUBLIC: LANDING PAGE DATA
+// 1. AUTH ACTIONS (Login & Logout)
+// ==========================================
+
+export async function authenticate(prevState: string | undefined, formData: FormData) {
+  try {
+    await signIn("credentials", formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return "Invalid credentials.";
+        default:
+          return "Something went wrong.";
+      }
+    }
+    throw error;
+  }
+}
+
+export async function logout() {
+  await signOut();
+}
+
+// ==========================================
+// 2. PUBLIC: LANDING PAGE DATA (Agency)
 // ==========================================
 
 export async function getLandingPageData() {
@@ -46,7 +71,7 @@ export async function getTeamPageData() {
 }
 
 // ==========================================
-// 2. PUBLIC: FORM SUBMISSIONS
+// 3. PUBLIC: FORM SUBMISSIONS (Contact & Jobs)
 // ==========================================
 
 export async function submitContactForm(formData: FormData) {
@@ -132,7 +157,7 @@ export async function submitJobApplication(formData: FormData) {
 }
 
 // ==========================================
-// 3. ADMIN: DASHBOARD DATA & ACTIONS
+// 4. ADMIN: DASHBOARD DATA & ACTIONS
 // ==========================================
 
 export async function getContactMessages() {
@@ -189,12 +214,13 @@ export async function approveProject(projectId: string) {
 }
 
 // ==========================================
-// 4. PLATFORM: THE LAB (CLIENT)
+// 5. PLATFORM: THE LAB (CLIENT - The Creator)
 // ==========================================
 
 export async function getAvailableHeroes() {
   try {
     const heroes = await prisma.heroProfile.findMany({
+      where: { isAvailable: true }, // Mengambil hero yang statusnya Available
       include: { user: true }
     });
 
@@ -202,7 +228,7 @@ export async function getAvailableHeroes() {
       id: hero.userId, 
       name: hero.user.name || hero.nickname,
       role: "Specialist", 
-      rate: 2500, 
+      rate: 2500, // USD (Hardcoded rate for MVP)
       stats: {
         speed: hero.statSpeed,
         logic: hero.statLogic,
@@ -225,9 +251,10 @@ export async function createProject(squadIds: string[], totalRate: number) {
   if (squadIds.length === 0) return { success: false, message: "Squad kosong." };
 
   try {
+    const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
     const project = await prisma.clientProject.create({
       data: {
-        name: `Project Alpha #${Math.floor(Math.random() * 1000)}`,
+        name: `New Project - ${dateStr}`, 
         description: "Drafted team from The Lab",
         clientId: userId,
         totalRate: totalRate,
@@ -273,7 +300,6 @@ export async function getClientProjects() {
 
 export async function getProjectDetails(projectId: string) {
   const session = await auth();
-  // Casting user session
   const user = session?.user as any;
   const userId = user?.id;
   const userRole = user?.role;
@@ -284,7 +310,7 @@ export async function getProjectDetails(projectId: string) {
     const project = await prisma.clientProject.findUnique({
       where: { id: projectId },
       include: {
-        client: true, // [BARU] Kita butuh data client untuk ditampilkan ke konsultan
+        client: true, // Data User Client
         members: {
           include: {
             hero: { include: { heroProfile: true } }
@@ -295,15 +321,11 @@ export async function getProjectDetails(projectId: string) {
 
     if (!project) return null;
 
-    // Security Logic: Siapa yang boleh lihat?
-    // 1. Admin
+    // Security Logic: Hanya Admin, Owner, atau Member yang boleh lihat
     const isAdmin = userRole === 'ADMIN';
-    // 2. Pemilik Project (Client)
     const isOwner = project.clientId === userId;
-    // 3. [BARU] Anggota Tim (Consultant yang terdaftar di project ini)
     const isMember = project.members.some(member => member.heroId === userId);
 
-    // Jika bukan salah satu dari di atas, tolak akses
     if (!isOwner && !isAdmin && !isMember) {
       return null;
     }
@@ -315,7 +337,7 @@ export async function getProjectDetails(projectId: string) {
 }
 
 // ==========================================
-// 5. PLATFORM: THE GUILD (CONSULTANT)
+// 6. PLATFORM: THE GUILD (CONSULTANT - The Hero)
 // ==========================================
 
 export async function getAssignedProjects() {
@@ -326,22 +348,367 @@ export async function getAssignedProjects() {
   try {
     const projects = await prisma.clientProject.findMany({
       where: {
-        members: { some: { heroId: userId } }
+        members: { some: { heroId: userId } },
+        status: { in: ['ACTIVE', 'COMPLETED'] }
       },
       include: {
         client: true,
-        members: { include: { hero: true } }
+        members: { 
+          include: { 
+            hero: {
+              include: { heroProfile: true } 
+            }
+          } 
+        }
       },
       orderBy: { updatedAt: 'desc' }
     });
     return projects;
   } catch (error) {
+    console.error("Failed to fetch assigned projects:", error);
     return [];
   }
 }
 
+export async function getQuests() {
+  const session = await auth();
+  const userId = (session?.user as any)?.id;
+
+  if (!userId) return { success: false, error: "Unauthorized" };
+
+  try {
+    // 1. Available Quests (Quest Board) - Status NEGOTIATION
+    const availableProjects = await prisma.clientProject.findMany({
+      where: {
+        status: 'NEGOTIATION',
+      },
+      include: {
+        client: { select: { name: true, email: true, image: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // 2. My Quests (Active Log) - Status ACTIVE/COMPLETED & User is Member
+    const myProjects = await prisma.clientProject.findMany({
+      where: {
+        status: { in: ['ACTIVE', 'COMPLETED'] },
+        members: { some: { heroId: userId } }, 
+      },
+      include: {
+        client: { select: { name: true, email: true, image: true } },
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+
+    const allProjects = [...myProjects, ...availableProjects];
+
+    const quests = allProjects.map((project) => {
+      let difficulty: 'S' | 'A' | 'B' | 'C' = 'B';
+      
+      // USD Thresholds Logic
+      if (project.totalRate > 5000) difficulty = 'S';
+      else if (project.totalRate > 3000) difficulty = 'A';
+      else if (project.totalRate > 1000) difficulty = 'B';
+      else difficulty = 'C';
+
+      const roleDisplay = project.status === 'NEGOTIATION' 
+        ? 'Open Squad' 
+        : 'Assigned Member';
+
+      // Estimasi Deadline (Mockup Real-time calculation)
+      const baseDate = project.status === 'ACTIVE' ? project.updatedAt : project.createdAt;
+      const estimatedDeadline = new Date(baseDate.getTime() + 30 * 24 * 60 * 60 * 1000); 
+      // Safe casting karena field deadline belum ada di schema ClientProject
+      const deadlineDate = estimatedDeadline;
+
+      return {
+        id: project.id,
+        title: project.name,
+        client: project.client.name || project.client.email || 'Unknown Client',
+        role: roleDisplay,
+        difficulty: difficulty,
+        reward: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(project.totalRate),
+        deadline: deadlineDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+        status: project.status === 'NEGOTIATION' ? 'AVAILABLE' : project.status, 
+        description: project.description,
+      };
+    });
+
+    return { success: true, data: quests };
+  } catch (error) {
+    console.error('Failed to fetch quests:', error);
+    return { success: false, error: 'Failed to fetch quests' };
+  }
+}
+
+export async function getGuildStats() {
+  const session = await auth();
+  const userId = (session?.user as any)?.id;
+  if (!userId) return null;
+
+  try {
+    // FIX: Menggunakan 'projectMember' (nama model di schema)
+    const projects = await prisma.projectMember.findMany({
+      where: { heroId: userId },
+      include: { project: true } // 'project' adalah relasi ke ClientProject
+    });
+
+    const activeQuests = projects.filter(p => p.project.status === 'ACTIVE').length;
+    const completedQuests = projects.filter(p => p.project.status === 'COMPLETED').length;
+    
+    const totalLootValue = projects.reduce((acc, curr) => acc + Number(curr.project.totalRate), 0);
+    const totalLoot = new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: 'USD', 
+      maximumFractionDigits: 0 
+    }).format(totalLootValue);
+
+    // RPG Leveling Logic
+    const xp = (completedQuests * 100) + (activeQuests * 20);
+    const level = Math.floor(xp / 500) + 1;
+    const nextLevelXp = level * 500;
+    const xpNeeded = nextLevelXp - xp;
+
+    let rank = "Rookie";
+    if (level >= 5) rank = "Specialist";
+    if (level >= 10) rank = "Elite";
+    if (level >= 20) rank = "Legend";
+
+    return {
+      activeQuests,
+      completedQuests,
+      totalLoot,
+      rank,
+      level,
+      xpNeeded
+    };
+  } catch (error) {
+    console.error("Failed to fetch guild stats:", error);
+    return null;
+  }
+}
+
+export async function getQuestById(projectId: string) {
+  const session = await auth();
+  const userId = (session?.user as any)?.id;
+  if (!userId) return null;
+
+  try {
+    const project = await prisma.clientProject.findUnique({
+      where: { id: projectId },
+      include: {
+        client: { select: { name: true, email: true, image: true } },
+        members: { 
+          include: { 
+            hero: { 
+              include: { heroProfile: true } 
+            } 
+          } 
+        }
+      }
+    });
+
+    if (!project) return null;
+
+    let difficulty: 'S' | 'A' | 'B' | 'C' = 'B';
+    if (project.totalRate > 5000) difficulty = 'S';
+    else if (project.totalRate > 3000) difficulty = 'A';
+    else if (project.totalRate > 1000) difficulty = 'B';
+    else difficulty = 'C';
+
+    const baseDate = project.status === 'ACTIVE' ? project.updatedAt : project.createdAt;
+    const estimatedDeadline = new Date(baseDate.getTime() + 30 * 24 * 60 * 60 * 1000); 
+    const deadlineDate = estimatedDeadline;
+
+    const isMember = project.members.some(m => m.heroId === userId);
+
+    // Transformasi data member agar bersih untuk UI
+    const squadMembers = project.members.map(m => ({
+      id: m.hero.id,
+      name: m.hero.heroProfile?.nickname || m.hero.name || "Unknown Hero",
+      role: m.hero.heroProfile?.tier || "Specialist", // Class RPG
+      image: m.hero.image,
+      stats: {
+        speed: m.hero.heroProfile?.statSpeed || 0,
+        logic: m.hero.heroProfile?.statLogic || 0,
+      }
+    }));
+
+    return {
+      id: project.id,
+      title: project.name,
+      client: project.client.name || project.client.email || 'Unknown Client',
+      clientImage: project.client.image,
+      role: isMember ? 'Member' : 'Open Slot',
+      difficulty,
+      reward: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(project.totalRate),
+      deadline: deadlineDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+      status: project.status,
+      description: project.description,
+      isMember: isMember,
+      memberCount: project.members.length,
+      members: squadMembers 
+    };
+  } catch (error) {
+    console.error("Failed to fetch quest detail:", error);
+    return null;
+  }
+}
+
+export async function joinQuest(projectId: string) {
+  const session = await auth();
+  const userId = (session?.user as any)?.id;
+  
+  if (!userId) return { success: false, message: "Unauthorized" };
+
+  try {
+    // 1. Cek ketersediaan project
+    const project = await prisma.clientProject.findUnique({
+      where: { id: projectId },
+      include: { members: true }
+    });
+
+    if (!project) return { success: false, message: "Quest not found." };
+    if (project.status !== 'NEGOTIATION') return { success: false, message: "Quest is no longer available." };
+
+    // 2. Cek apakah user sudah bergabung
+    const isAlreadyMember = project.members.some(m => m.heroId === userId);
+    if (isAlreadyMember) return { success: false, message: "You have already joined this quest." };
+
+    // 3. Gabung ke Quest (Create record di ProjectMember)
+    // Menggunakan nama field 'projectId' sesuai schema
+    await prisma.projectMember.create({
+      data: {
+        projectId: projectId,
+        heroId: userId
+      }
+    });
+
+    revalidatePath('/guild');
+    revalidatePath(`/guild/project/${projectId}`);
+    return { success: true, message: "You have joined the squad!" };
+
+  } catch (error) {
+    console.error("Join Quest Error:", error);
+    return { success: false, message: "Failed to join quest." };
+  }
+}
+
 // ==========================================
-// 6. GENERAL: USER SETTINGS (REAL)
+// 7. HERO PROFILE (CHARACTER SHEET)
+// ==========================================
+
+export async function getHeroStats() {
+  const session = await auth();
+  const userId = (session?.user as any)?.id;
+  if (!userId) return null;
+
+  try {
+    // 1. Ambil Data User beserta HeroProfile-nya
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { heroProfile: true }
+    });
+
+    if (!user) return null;
+
+    // 2. LOGIKA REAL: Jika HeroProfile belum ada, BUAT SEKARANG (Auto-Initialize)
+    // Ini memastikan data yang tampil adalah data database yang sah, bukan mock object.
+    let hero = user.heroProfile;
+
+    if (!hero) {
+      hero = await prisma.heroProfile.create({
+        data: {
+          userId: userId,
+          nickname: user.name || "Consultant", 
+          isAvailable: true,
+          statSpeed: 50,      // Base stat standar
+          statLogic: 50,
+          statAesthetic: 50,
+          tier: "Specialist", // Default Class/Tier
+          xp: 0
+        }
+      });
+    }
+
+    // 3. Hitung XP Real-time dari Riwayat Project (Quest Log)
+    // Menggunakan relasi 'projectMember' sesuai schema.prisma
+    const projects = await prisma.projectMember.findMany({
+      where: { heroId: userId },
+      include: { project: true } 
+    });
+
+    const completed = projects.filter(p => p.project.status === 'COMPLETED').length;
+    const active = projects.filter(p => p.project.status === 'ACTIVE').length;
+    
+    // Rumus XP: Selesai=100xp, Sedang Jalan=20xp
+    const xp = (completed * 100) + (active * 20);
+    
+    // Leveling: Setiap 500 XP naik 1 level
+    const level = Math.floor(xp / 500) + 1;
+    const nextLevelXp = level * 500;
+
+    // Return data yang siap ditampilkan di UI
+    return {
+      name: hero.nickname, 
+      email: user.email,
+      class: hero.tier,
+      level,
+      xp,
+      xpNext: nextLevelXp, 
+      stats: {
+        speed: hero.statSpeed,
+        logic: hero.statLogic,
+        aesthetic: hero.statAesthetic
+      },
+      availability: hero.isAvailable,
+      // Kirim data real untuk ditampilkan di frontend
+      completedProjects: completed,
+      activeProjects: active
+    };
+
+  } catch (error) {
+    console.error("Failed to fetch hero stats:", error);
+    return null;
+  }
+}
+
+// [REAL] Fungsi Update Status Ketersediaan
+export async function updateHeroAvailability(status: boolean) {
+  const session = await auth();
+  const userId = (session?.user as any)?.id;
+  if (!userId) return { success: false, message: "Unauthorized" };
+
+  try {
+    // Upsert untuk memastikan update berjalan meski data baru dibuat
+    await prisma.heroProfile.upsert({
+      where: { userId },
+      create: {
+        userId,
+        isAvailable: status,
+        nickname: session?.user?.name || "Hero",
+        statSpeed: 50,
+        statLogic: 50,
+        statAesthetic: 50
+      },
+      update: {
+        isAvailable: status
+      }
+    });
+
+    revalidatePath('/guild');
+    revalidatePath('/guild/profile');
+    revalidatePath('/lab'); // Agar client melihat status terbaru
+    
+    return { success: true, message: `Status updated to ${status ? 'Available' : 'Busy'}` };
+  } catch (error) {
+    console.error("Update Status Error:", error);
+    return { success: false, message: "Failed to update status" };
+  }
+}
+
+// ==========================================
+// 8. GENERAL: USER SETTINGS (REAL)
 // ==========================================
 
 export async function updateProfile(formData: FormData) {
@@ -354,10 +721,16 @@ export async function updateProfile(formData: FormData) {
   const newPassword = formData.get("newPassword") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
 
-  // Objek data yang akan diupdate (Defaultnya hanya nama)
   const updateData: any = { name };
 
-  // Logika Ganti Password (Jika diisi)
+  // Update Hero Profile Nickname juga agar sinkron dengan User Name
+  try {
+      await prisma.heroProfile.update({
+          where: { userId },
+          data: { nickname: name }
+      }).catch(() => {}); // Ignore error jika profile belum ada
+  } catch (e) {}
+
   if (newPassword && newPassword.trim() !== "") {
     if (newPassword !== confirmPassword) {
       console.error("Password mismatch"); 
@@ -368,7 +741,6 @@ export async function updateProfile(formData: FormData) {
         return { success: false, message: "Password minimal 6 karakter." };
     }
 
-    // Hash password baru sebelum simpan ke DB
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     updateData.password = hashedPassword;
   }
@@ -380,6 +752,7 @@ export async function updateProfile(formData: FormData) {
     });
     
     revalidatePath('/settings');
+    revalidatePath('/guild/profile');
     return { success: true, message: "Profil berhasil diperbarui!" };
   } catch (error) {
     console.error("Update Profile Error:", error);

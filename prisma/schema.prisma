@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -100,8 +103,6 @@ model User {
   
   // 3. Project dimana User ini menjadi ANGGOTA TIM (The Guild)
   consultantProjects ProjectMember[] @relation("ConsultantMember")
-
-  // (Optional: Future "Quest" system bisa ditambahkan nanti disini)
 }
 
 model HeroProfile {
@@ -115,6 +116,9 @@ model HeroProfile {
   statLogic     Int     @default(5)
   statAesthetic Int     @default(5)
   xp            Int     @default(0)
+  
+  // [BARU] Field untuk fitur Availability Toggle
+  isAvailable   Boolean @default(true)
 }
 
 // ==========================================
