@@ -123,13 +123,13 @@ export const TeamSection = ({ data }: { data: any[] }) => (
             transition={{ delay: idx * 0.2 }}
             className="rounded-2xl p-6 bg-slate-900/60 border border-slate-800 backdrop-blur-sm flex gap-6 items-center"
           >
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-indigo-500/30 flex-shrink-0">
+            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-cyan-500/30 flex-shrink-0">
               <img src={member.image} alt={member.name} className="w-full h-full object-cover" 
               onError={(e: any) => e.target.src = "https://placehold.co/100x100/333/FFF?text=User"}/>
             </div>
             <div>
               <h3 className="text-xl font-bold text-white">{member.name}</h3>
-              <p className="text-indigo-400 font-medium">{member.role}</p>
+              <p className="text-cyan-400 font-medium">{member.role}</p>
               <p className="text-sm text-slate-400 mt-2">{member.description}</p>
             </div>
           </motion.div>
@@ -155,7 +155,7 @@ export const ServicesSection = ({ data }: { data: any[] }) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 onClick={() => setSelected(skill)}
-                className="rounded-2xl overflow-hidden cursor-pointer group bg-slate-900/60 border border-slate-800 hover:border-indigo-500/50 transition-all"
+                className="rounded-2xl overflow-hidden cursor-pointer group bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 transition-all"
              >
                 <div className="h-48 overflow-hidden relative">
                    <img src={skill.image} alt={skill.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform" 
@@ -180,7 +180,7 @@ export const ServicesSection = ({ data }: { data: any[] }) => {
                 <p>{selected.description}</p>
                 <div className="flex flex-wrap gap-2 mt-4">
                    {selected.techStack.map((tech: string, i:number) => (
-                      <span key={i} className="px-2 py-1 bg-indigo-500/10 text-indigo-300 rounded text-xs">{tech}</span>
+                      <span key={i} className="px-2 py-1 bg-cyan-500/10 text-cyan-300 rounded text-xs">{tech}</span>
                    ))}
                 </div>
              </div>
@@ -192,12 +192,12 @@ export const ServicesSection = ({ data }: { data: any[] }) => {
 
 // --- FOOTER ---
 export const Footer = () => (
-  <footer className="pt-24 pb-12 bg-slate-900 border-t border-slate-800 text-white">
+  <footer className="pt-24 pb-12 bg-slate-950 border-t border-slate-800 text-white">
     <div className="container mx-auto px-4 text-center">
       <h2 className="text-4xl font-extrabold mb-6">Ready to Level Up?</h2>
       <p className="text-xl text-slate-400 mb-10">Consult your website & marketing needs with us.</p>
       <div className="flex justify-center gap-4 mb-12">
-        <a href="https://wa.me/6282279513201" className="px-8 py-4 bg-indigo-600 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition">Book Consultation</a>
+        <a href="https://wa.me/6282279513201" className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl font-bold shadow-lg shadow-cyan-500/25 hover:from-cyan-500 hover:to-teal-500 transition">Book Consultation</a>
       </div>
       <div className="h-px w-full bg-slate-800 my-12"></div>
       <p className="text-slate-500">© {new Date().getFullYear()} Swakarsa Digital. All Rights Reserved.</p>

@@ -24,3 +24,73 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Ocean Wave Animation - CSS-only, highly performant with seamless looping */
+@keyframes wave-flow {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(-12.5%) translateY(-4px);
+  }
+  50% {
+    transform: translateX(-25%) translateY(-6px);
+  }
+  75% {
+    transform: translateX(-37.5%) translateY(-4px);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes wave-bob {
+  0%, 100% {
+    transform: translateX(-25%) translateY(0);
+  }
+  25% {
+    transform: translateX(-25%) translateY(-3px);
+  }
+  50% {
+    transform: translateX(-25%) translateY(-5px);
+  }
+  75% {
+    transform: translateX(-25%) translateY(-3px);
+  }
+}
+
+@keyframes wave-shimmer {
+  0%, 100% {
+    opacity: 0.2;
+    transform: translateX(-50%) translateY(0);
+  }
+  25% {
+    opacity: 0.25;
+    transform: translateX(-50%) translateY(-2px);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateX(-50%) translateY(-3px);
+  }
+  75% {
+    opacity: 0.25;
+    transform: translateX(-50%) translateY(-2px);
+  }
+}
+
+.ocean-wave {
+  animation: wave-flow 12s ease-in-out infinite;
+  will-change: transform;
+}
+
+.ocean-wave-bob {
+  animation: wave-bob 8s ease-in-out infinite;
+  animation-delay: -4s;
+  will-change: transform;
+}
+
+.ocean-wave-shimmer {
+  animation: wave-shimmer 6s ease-in-out infinite;
+  animation-delay: -2s;
+  will-change: transform, opacity;
+}

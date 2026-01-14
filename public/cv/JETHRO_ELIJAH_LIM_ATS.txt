@@ -1,0 +1,52 @@
+JETHRO ELIJAH LIM
+Digital Marketing Technologist / Full Stack Developer
+
+PROFESSIONAL CONTACT
+Email: jethro.elijahlim01@gmail.com
+Location: Indonesia (Available for Remote Work / US Market Focused)
+LinkedIn: Jethro Elijah Lim
+
+PROFESSIONAL SUMMARY
+Tech-Savvy Digital Marketer who blends marketing creativity with technical expertise to build tools and automation that drive measurable results. Strong proficiency in Lead Generation, Full-Stack Development, and Machine Learning. Expert in leveraging ML and software engineering to create powerful marketing automation tools. Proven track record in SaaS development, data analytics, and business strategy with demonstrated success in revenue generation and community building.
+
+TECHNICAL SKILLS
+Development: Full-Stack Development, Database Management, Python, React, Excel VBA
+Marketing Technology: Lead Generation, Marketing Automation, Data Analytics
+Data Science: Machine Learning, Predictive Analytics, Chart.js, Semantic Search, RNN (Recurrent Neural Networks)
+
+PROFESSIONAL EXPERIENCE
+
+Software Engineering and SaaS Development
+
+SaaSQuatch Leads (Caprae Capital Internship): Delivered foundational development for SaaS lead generation platform. Built core features enabling automated lead collection and enrichment for B2B markets.
+
+Interactive Sales Dashboard: Transformed static Excel reports into dynamic visual dashboards with real-time analytics and predictive insights using Python and React. Enhanced decision-making capabilities for sales teams.
+
+Hotel Management System: Built comprehensive system for hotel operations and guest management. Streamlined booking processes and improved operational efficiency.
+
+Logistics Business Management: Developed end-to-end logistics management system with mobile app integration. Enabled real-time tracking and optimized delivery operations.
+
+Inventory Systems: Created specialized inventory systems for Sandwich Panel suppliers (sales management) and Car Dealerships (financial management). Reduced manual tracking errors and improved inventory accuracy.
+
+Machine Learning and Data Science
+
+Product Search Engine: Developed advanced semantic search system with phonetic and similarity matching. Improved search accuracy and user experience.
+
+Loyal Customer Prediction: Achieved high AUC/ROC scores in predicting loyal customers for Shopee Hiring Test. Implemented machine learning models for customer segmentation.
+
+Trader and Price Detection: Built systems to identify high-volume buyers for promo targeting and categorize product price rises. Enabled data-driven pricing strategies.
+
+Brand Origin Prediction: Utilized Recurrent Neural Networks (RNN) and real-time scraping to predict brand origin countries. Enhanced product categorization and market analysis.
+
+Self-Tuning Discord Bot: Created AI-powered bot with multimedia features and periodic fine-tuning. Improved user engagement and automation capabilities.
+
+Business and Marketing Strategy
+
+Pet Product Distribution: Achieved $2,800 Monthly Recurring Revenue with zero marketing budget using creative survey marketing and consignment model. Demonstrated innovative go-to-market strategies.
+
+Academic Services Platform: Built community leadership and groups exceeding 3,000 members across WhatsApp and Line. Facilitated knowledge sharing and community engagement.
+
+Social Media Marketing: Managed organic growth and strategic collaborations for skincare, cakery, and aromatherapy businesses. Increased brand awareness and customer acquisition.
+
+Food Event Business: Leveraged offline events for targeted customer acquisition and lead generation. Combined traditional marketing with digital tools for maximum impact.
+

@@ -1,0 +1,44 @@
+ASEP SAEFUDDIN
+Fullstack Software Developer
+
+PROFESSIONAL CONTACT
+Email: saefuddinasep@yahoo.com
+Location: Cirebon, Indonesia
+
+PROFESSIONAL SUMMARY
+Software Developer specialized in Fullstack JavaScript with strong fundamental understanding and quick adaptation skills. Experienced in building web-based and mobile applications, integrating frontend and backend technologies, and implementing Artificial Intelligence (AI) in real-world projects. Proficient in ReactJS, NextJS, Node.js, and MongoDB. Skilled in team collaboration and AI integration for innovative solutions.
+
+TECHNICAL SKILLS
+Languages: JavaScript, SQL, HTML, CSS
+Frontend: ReactJS, NextJS, Dicoding Tools
+Backend: Node.js, Structured Query Language (SQL)
+Database: MongoDB (NoSQL)
+Other: Team Collaboration, AI Integration, Educational Systems Management
+
+PROFESSIONAL EXPERIENCE
+
+Web Developer | Freelance | Remote
+January 2025 - Present
+- Developed Library Assistant application for Kampus Sanata Dharma
+- Created Online School Exam Application for Ruang Kelas platform
+- Designed and deployed responsive landing pages for educational institutions
+- Implemented full-stack solutions using ReactJS, NextJS, and Node.js
+
+Administrative Staff | Nurul Hidayah | Cirebon, Indonesia
+October 2022 - Present
+- Manage educational data systems (Dapodik, BOS) and various school applications to ensure accurate reporting and compliance
+- Handle administrative operations including HR, student affairs, finance, and correspondence
+- Teach ICT classes, creating engaging, visual-based materials to improve student digital literacy
+- Maintain and update school database systems and records
+
+EDUCATION
+
+Bachelor of Informatics Engineering | STMIK IKMI Cirebon | Cirebon, Indonesia
+2019 - 2023
+GPA: 3.4/4.0
+
+CERTIFICATIONS
+- Bootcamp Hacktiv8 Fullstack Javascript
+- ReactJs Certification | Dicoding
+- Frontend Tools Certification | Dicoding
+

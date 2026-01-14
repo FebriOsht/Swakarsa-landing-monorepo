@@ -1,0 +1,57 @@
+DANIEL LIM
+Computer Science / Machine Learning / Full Stack Developer
+
+PROFESSIONAL CONTACT
+Email: daniellim433@gmail.com
+Location: Jakarta, Indonesia
+LinkedIn: linkedin.com/in/daniellim27/
+
+PROFESSIONAL SUMMARY
+Third-semester Computer Science student at BINUS International University with strong skills in software development and data science. Experienced in machine learning, full-stack development, and database systems including MongoDB and PostgreSQL. Passionate about leveraging AI, automation, and software engineering to build SaaS and enterprise solutions. Proven track record in developing scalable applications and ML-based automation tools.
+
+TECHNICAL SKILLS
+Languages and Frameworks: Python, Java, JavaScript, HTML, CSS, React, Django, Tkinter, Pygame
+Data and Machine Learning: Scikit-learn, Pandas, NumPy, Data Analysis, Data Visualization
+Databases: MongoDB, PostgreSQL, MySQL
+Tools and Security: Git/GitHub, REST APIs, Cybersecurity, Enumeration, RADIUS/AD Integration
+
+PROFESSIONAL EXPERIENCE
+
+Full-Stack and Software Development Freelance | Swakarsa Digital | Remote
+July 2025 - Present
+- Developing full-stack web application for admin of CNG expedition service
+- Building companion mobile/web app for drivers to streamline logistics operations
+- Implementing scalable architecture for enterprise-level applications
+
+Full-Stack Intern | SaaSquatch Leads | Remote
+May 2025 - June 2025
+- Leveraged tools and scrapers built at Caprae Capitals to develop SaaS product for B2B lead generation
+- Implemented full-stack components with React, Django, and PostgreSQL for scalable architecture
+- Designed SaaS workflows to automate lead enrichment and customer data processing
+
+Machine Learning Intern | Caprae Capitals | Remote
+May 2025 - June 2025
+- Developed and optimized ML-based financial data pipelines for automation
+- Built LeadGen Scraper to collect, clean, and structure company information for B2B prospecting
+- Collaborated with CEO and team to align ML solutions with business goals
+
+KEY PROJECTS
+
+LeadGen Scraper (Python): Automated company data collection for B2B leads, solving formatting and data quality issues
+
+Olfactory Engineers: Developed customer service platform (Helpdesk Ticketing System) for online perfume sales
+
+Car Rental System: Created rental platform featuring GUI (Tkinter) and MySQL database integration
+
+Car Wash Management System: Built management system for customer records and transactions using Java OOP
+
+2D Fighting Game: Developed real-time multiplayer fighting game using Python Pygame
+
+Data Science Projects: Analyzed socioeconomic factors affecting diabetes (US dataset), studied effect of terrorism on tourism, and built obesity classification models using clustering and classification
+
+EDUCATION
+
+Bachelor of Science in Computer Science | BINUS International University | Jakarta, Indonesia
+Expected Graduation: 2027
+Current: Third Semester
+

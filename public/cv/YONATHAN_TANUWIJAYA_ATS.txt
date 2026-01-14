@@ -1,0 +1,64 @@
+YONATHAN TANUWIJAYA
+Software Engineer / Full Stack Developer
+
+PROFESSIONAL CONTACT
+Email: yonathan.tanu123@gmail.com
+Location: Bandar Lampung, Indonesia
+GitHub: github.com/Rmyonathan
+LinkedIn: linkedin.com/in/yonathan-tanuwijaya-804236382/
+
+PROFESSIONAL SUMMARY
+High-achieving Computer Science undergraduate (GPA 3.4/4.0) with specialized minor in Data Science from Binus University. Founder of Swakarsa Digital, serving as Technical Development Lead for over 30+ projects managing full SDLC. Proficient in bridging hardware (IoT) and software (Web/Mobile) to solve complex operational problems. Technical expertise spans Full Stack Development (React, Next.js, Laravel), Data Engineering, and Cybersecurity. Proven leader with experience managing distributed teams and delivering enterprise-level solutions.
+
+TECHNICAL SKILLS
+Languages: Python (Advanced), JavaScript (ES6+), PHP, C++, Java, SQL
+Frontend: React.js, Next.js, React Native, Tailwind CSS, HTML5
+Backend: Node.js, Laravel (MVC), Express.js, RESTful API Design
+Data and IoT: Machine Learning (Scikit-learn), Pandas, OCR, Web Scraping, MQTT, IoT Hardware
+Business: Project Management, SDLC, Digital Marketing, Project Planning
+
+PROFESSIONAL EXPERIENCE
+
+Software Developer (Contract) | Resilio Partners | Remote (USA)
+November 2025 - Present
+- Contributing developer for oneclicksmartresume.com, focusing on frontend functionality and user experience enhancements
+- Utilize JavaScript and HTML to build responsive web components and ensure high-quality delivery
+- Collaborate with remote team to deliver production-ready features
+
+Founder and Technical Development Lead | Swakarsa Digital | Remote
+2022 - Present
+- Manage distributed team of freelancers and oversee end-to-end SDLC, successfully delivering 30+ projects ranging from ERPs to IoT solutions
+- Design scalable system architectures using Next.js and Laravel, ensuring code quality and maintainability
+- Provide IT consultancy services covering Computer Networking, Cybersecurity audits, and network support
+- Drive business growth through strategic digital marketing and client acquisition
+
+Information Technology Intern | Fajar Pangan Lestari | Bandar Lampung, Indonesia
+2024 - 2025
+- Maintained and troubleshot critical IT infrastructure for major food distribution company, ensuring 99% uptime for logistics software
+- Analyzed supply chain data flow and assisted in database query optimizations to accelerate reporting
+- Implemented system improvements to enhance operational efficiency
+
+CEO and Founder | BOXFISH.CO | Bandar Lampung, Indonesia
+August 2021 - June 2022
+- Established specialized aquatic business, building loyal community network across Sumatra and Java
+- Developed custom Python-based transaction reporting tool to automate sales tracking, reducing manual bookkeeping time by 40%
+- Managed business operations and strategic planning
+
+KEY PROJECTS
+
+Swakarsa Digital Platform: Official agency platform built with Next.js for server-side rendering, achieving 95+ Google Lighthouse score
+
+Angkutan System: Logistics management web app with Route Optimization (Leaflet Maps) and automated financial tracking for vehicle dispatch
+
+CNG-Logistics System: IoT and OCR-based system for gas transport. Features Python-based OCR to read pressure gauges and prevent fraud, integrated with GPS fleet tracking
+
+Rental PS IoT Automation: Hardware-software solution using C++ (Arduino/ESP32) and Node.js to automatically cut power to consoles when rental time expires
+
+Toko Global Teknik ERP: Custom ERP with Point of Sale (POS) and real-time inventory tracking for thousands of SKUs
+
+EDUCATION
+
+Bachelor of Computer Science (Minor in Data Science) | Binus University | Indonesia
+Expected Graduation: August 2025
+GPA: 3.40/4.00
+

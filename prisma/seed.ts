@@ -86,32 +86,7 @@ async function main() {
   console.log(`Seeded ${heroesData.length} Consultants`)
 
   // ==========================================
-  // 3. SEED TEAM MEMBERS (Public Website)
-  // ==========================================
-  // Menggunakan createMany agar lebih cepat
-  await prisma.teamMember.createMany({
-    data: [
-      {
-        name: "M. Jonathan Tanuwijaya",
-        role: "CEO & Lead Developer",
-        image: "/images/jonathan.jpeg",
-        description: "Leading the team with over 5 years of experience in the digital industry.",
-        order: 1
-      },
-      {
-        name: "Jethro Elijah Lim",
-        role: "Co-Founder & Marketing Director",
-        image: "/images/jethro.jpeg",
-        description: "Digital strategy expert with a proven track record of increasing online business sales.",
-        order: 2
-      }
-    ],
-    skipDuplicates: true
-  })
-  console.log('Seeded Public Team Members')
-
-  // ==========================================
-  // 4. SEED SKILLS / SERVICES
+  // 3. SEED SKILLS / SERVICES
   // ==========================================
   await prisma.skill.create({
     data: {
@@ -139,29 +114,6 @@ async function main() {
     }
   })
   console.log('Seeded Services/Skills')
-
-  // ==========================================
-  // 5. SEED PORTFOLIO
-  // ==========================================
-  await prisma.portfolioProject.create({
-    data: {
-      title: "Maju Mobilindo",
-      category: "E-commerce Website",
-      client: "Maju Mobilindo - Used Car Dealer",
-      image: "/portfolio/Maju Mobilindo.jpeg",
-      shortDescription: "E-commerce website for used car dealer with extensive catalog.",
-      description: "Developing a comprehensive e-commerce website for a used car dealership, featuring advanced search filters, car comparison tools, and an admin dashboard for inventory management.",
-      duration: "8 Weeks",
-      challenges: ["Managing 500+ car catalog", "Creating responsive search engine"],
-      solutions: ["Implementing advanced filtering system", "CDN for fast image loading"],
-      results: [
-        { "value": "300%", "label": "Traffic Increase" },
-        { "value": "45%", "label": "Conversion Rate" }
-      ],
-      techStack: ["Next.js", "Tailwind CSS", "PostgreSQL"]
-    }
-  })
-  console.log('Seeded Portfolio')
 
   console.log('✅ Seeding completed successfully!')
 }

@@ -6,7 +6,6 @@ import {
   FileText,
   ExternalLink,
   Lock,
-  CheckCircle,
   XCircle,
   Loader2,
   ShieldCheck
@@ -21,45 +20,65 @@ const VALID_ACCESS_CODE = "SWAKARSA2025";
 const STORAGE_KEY = "team_cv_access_expires";
 const ACCESS_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Memoized Background to prevent re-renders (Performance Optimization)
-const BackgroundEffects = memo(() => (
+// Lightweight Ocean Wave Background - Performance Optimized
+const OceanWaveBackground = memo(() => (
   <div className="fixed pointer-events-none inset-0 overflow-hidden z-0">
+    {/* Subtle animated gradient mesh */}
     <motion.div
       animate={{
-        scale: [1, 1.1, 1],
-        opacity: [0.2, 0.3, 0.2],
+        x: [0, 100, 0],
       }}
       transition={{
-        duration: 15,
+        duration: 20,
         repeat: Infinity,
         ease: "linear",
       }}
-      className="absolute -top-40 left-1/4 -translate-x-1/2
-      w-[600px] h-[600px]
-      bg-gradient-to-tr from-indigo-500/10 via-purple-500/5 to-pink-500/10
-      rounded-full blur-[120px]"
-      style={{ willChange: "transform, opacity" }}
+      className="absolute inset-0 opacity-30"
+      style={{
+        background: `
+          radial-gradient(circle at 20% 50%, rgba(34, 211, 238, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(20, 184, 166, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%)
+        `,
+      }}
     />
-    <motion.div
+    
+    {/* Lightweight SVG wave animation - using transform for better performance */}
+    <motion.svg
+      className="absolute bottom-0 left-0 w-full h-64 opacity-20"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1440 320"
+      preserveAspectRatio="none"
       animate={{
-        scale: [1.1, 1, 1.1],
-        opacity: [0.1, 0.2, 0.1],
+        x: [0, -1440, 0],
       }}
       transition={{
-        duration: 10,
+        duration: 20,
         repeat: Infinity,
-        ease: "easeInOut",
+        ease: "linear",
       }}
-      className="absolute -bottom-40 -right-20
-      w-[500px] h-[500px]
-      bg-gradient-to-tr from-cyan-400/5 to-blue-500/5
-      rounded-full blur-[100px]"
-      style={{ willChange: "transform, opacity" }}
-    />
+    >
+      <path
+        d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+        fill="url(#oceanGradient)"
+      />
+      <path
+        d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+        fill="url(#oceanGradient)"
+        transform="translate(1440, 0)"
+      />
+      <defs>
+        <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="rgba(34, 211, 238, 0.3)" />
+          <stop offset="50%" stopColor="rgba(20, 184, 166, 0.2)" />
+          <stop offset="100%" stopColor="rgba(56, 189, 248, 0.1)" />
+        </linearGradient>
+      </defs>
+    </motion.svg>
   </div>
 ));
 
-BackgroundEffects.displayName = 'BackgroundEffects';
+OceanWaveBackground.displayName = 'OceanWaveBackground';
 
 // Expanded Dummy Data to match TeamPage categories
 const teamCV: Record<string, any> = {
@@ -186,8 +205,8 @@ export default function TeamCVPage() {
   =========================== */
   if (!hasAccess) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center px-4 relative overflow-hidden">
-        <BackgroundEffects />
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-4 relative overflow-hidden">
+        <OceanWaveBackground />
         
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -199,11 +218,11 @@ export default function TeamCVPage() {
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
             
             {/* Top Shine Effect */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
 
             <div className="flex flex-col items-center text-center mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mb-4 border border-indigo-500/30 shadow-lg shadow-indigo-500/10">
-                <ShieldCheck size={32} className="text-indigo-400" />
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 flex items-center justify-center mb-4 border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
+                <ShieldCheck size={32} className="text-cyan-400" />
               </div>
               <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
                 Protected Access
@@ -215,7 +234,7 @@ export default function TeamCVPage() {
 
             <form onSubmit={handleAccessSubmit} className="space-y-4">
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition-opacity duration-300" />
                 <input
                   type="password"
                   placeholder="Enter Access Code"
@@ -224,10 +243,10 @@ export default function TeamCVPage() {
                     setAccessCode(e.target.value);
                     if (accessStatus === 'error') setAccessStatus(null);
                   }}
-                  className={`relative w-full px-4 py-4 rounded-xl bg-black/50 border backdrop-blur-sm text-white placeholder-slate-500 outline-none transition-all duration-300
+                  className={`relative w-full px-4 py-4 rounded-xl bg-slate-950/50 border backdrop-blur-sm text-white placeholder-slate-500 outline-none transition-all duration-300
                     ${accessStatus === 'error' 
                       ? "border-red-500/50 focus:border-red-500" 
-                      : "border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50"
+                      : "border-white/10 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50"
                     }
                   `}
                 />
@@ -237,7 +256,7 @@ export default function TeamCVPage() {
               <button
                 type="submit"
                 disabled={isChecking || !accessCode}
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 font-semibold text-white shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 relative overflow-hidden"
+                className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 font-semibold text-white shadow-lg shadow-cyan-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 relative overflow-hidden"
               >
                 {isChecking ? (
                   <div className="flex items-center justify-center gap-2">
@@ -285,8 +304,8 @@ export default function TeamCVPage() {
   =========================== */
   if (!team) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
-        <BackgroundEffects />
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+        <OceanWaveBackground />
         <div className="relative z-10">
           <h1 className="text-4xl font-extrabold mb-4">Team Not Found</h1>
           <p className="text-slate-400 mb-6">
@@ -294,7 +313,7 @@ export default function TeamCVPage() {
           </p>
           <a
             href="/team"
-            className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition-colors inline-block"
+            className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 transition-colors inline-block"
           >
             Back to Teams
           </a>
@@ -307,19 +326,19 @@ export default function TeamCVPage() {
      MAIN CONTENT (ACCESS GRANTED)
   =========================== */
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
-      <BackgroundEffects />
+    <div className="min-h-screen bg-slate-950 text-white relative overflow-x-hidden">
+      <OceanWaveBackground />
 
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-black/40 backdrop-blur-md border-b border-white/5">
+      <nav className="sticky top-0 z-50 bg-slate-950/40 backdrop-blur-md border-b border-white/5">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <a href="/team" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
               <ArrowLeft size={20} />
               <span>Back</span>
             </a>
-            <div className="flex items-center gap-2 text-green-400 bg-green-400/10 px-3 py-1 rounded-full text-sm border border-green-400/20">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            <div className="flex items-center gap-2 text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-full text-sm border border-cyan-400/20">
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
               Access Granted
             </div>
           </div>
@@ -346,18 +365,18 @@ export default function TeamCVPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="group relative bg-white/5 border border-white/10 hover:border-indigo-500/50 rounded-2xl p-6 transition-all duration-300 hover:bg-white/10 hover:-translate-y-1"
+                className="group relative bg-white/5 border border-white/10 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 hover:bg-white/10 hover:-translate-y-1"
               >
                 <div className="flex justify-between items-start mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-indigo-500/30 text-indigo-400 font-bold text-xl">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 flex items-center justify-center border border-cyan-500/30 text-cyan-400 font-bold text-xl">
                     {cv.name.charAt(0)}
                   </div>
-                  <span className="text-xs font-mono text-slate-500 bg-black/40 px-2 py-1 rounded">
+                  <span className="text-xs font-mono text-slate-500 bg-slate-950/40 px-2 py-1 rounded">
                     {cv.experience}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-indigo-400 transition-colors">
+                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">
                   {cv.name}
                 </h3>
                 <p className="text-sm text-slate-400 mb-6">{cv.role}</p>
@@ -367,7 +386,7 @@ export default function TeamCVPage() {
                     href={cv.file}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between w-full p-3 rounded-xl bg-indigo-600/10 text-indigo-300 hover:bg-indigo-600 hover:text-white transition-all group/btn"
+                    className="flex items-center justify-between w-full p-3 rounded-xl bg-cyan-600/10 text-cyan-300 hover:bg-cyan-600 hover:text-white transition-all group/btn"
                   >
                     <span className="flex items-center gap-2 font-medium">
                       <FileText size={18} />
