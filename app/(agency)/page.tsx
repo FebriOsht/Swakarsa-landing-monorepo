@@ -1,12 +1,14 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring, animate, useMotionTemplate } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring, animate, PanInfo } from "framer-motion";
 // Importing Lucide icons
 import { 
   Mail, Phone, Globe, Menu, X, ChevronRight, ExternalLink, ArrowRight, 
-  Code, Cpu, Layers, Sparkles, ChevronDown, Bug
+  Code, Cpu, Layers, Sparkles, ChevronDown, Bug, ChevronLeft,
+  MessageSquareQuote, CheckCircle2, HelpCircle, Plus, Minus, Rocket, Search
 } from "lucide-react";
 import { useState, useEffect, useRef, memo } from "react";
+import { useRouter } from "next/navigation";
 
 // ================= UTILITY COMPONENTS =================
 
@@ -99,9 +101,9 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
   const navLinks = [
     { name: "Home", href: "#home" },
     { name: "Services", href: "#services" },
+    { name: "Process", href: "#process" },
     { name: "Portfolio", href: "#portfolio" },
     { name: "Team", href: "#team" },
-    { name: "Contact", href: "#contact" },
   ];
 
   return (
@@ -202,81 +204,60 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
   );
 };
 
-// ================= CYBER FROG V3 COMPONENT (FULLY ANIMATED) =================
+// ================= CYBER FROG V3 COMPONENT =================
+// (Code remains same as corrected previous version)
 const CyberFrog = () => {
   const [isRibbiting, setIsRibbiting] = useState(false);
   const [isBlinking, setIsBlinking] = useState(false);
   const [msgIndex, setMsgIndex] = useState(0);
-
-  // --- BUG & EATING LOGIC ---
   const [bug, setBug] = useState<{ x: number; y: number; status: 'flying' | 'being_eaten' } | null>(null);
 
   useEffect(() => {
     const spawnBugSequence = () => {
-      // Random bug position (SVG ViewBox 0-100 x, 0-60 y)
-      const bugX = Math.random() * 80 + 10; // range 10 - 90
-      const bugY = Math.random() * 50 + 5;  // range 5 - 55 (upper area)
-      
-      // 1. Spawn Bug
+      const bugX = Math.random() * 80 + 10;
+      const bugY = Math.random() * 50 + 5;
       setBug({ x: bugX, y: bugY, status: 'flying' });
-
-      // 2. Frog eats bug after 2 seconds
       setTimeout(() => {
         setBug(prev => prev ? { ...prev, status: 'being_eaten' } : null);
-        
-        // Visual 'Ribbit' effect when eating
         setIsRibbiting(true);
         setTimeout(() => setIsRibbiting(false), 500);
       }, 2000);
-
-      // 3. Hide bug (eaten)
       setTimeout(() => {
         setBug(null);
-      }, 2300); // 300ms tongue duration
+      }, 2300);
     };
-
-    // Initial spawn fast, then every 20s
     const initialTimer = setTimeout(spawnBugSequence, 3000);
     const intervalTimer = setInterval(spawnBugSequence, 20000);
-
     return () => {
       clearTimeout(initialTimer);
       clearInterval(intervalTimer);
     };
   }, []);
 
-  // --- MOUSE TRACKING LOGIC ---
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-
-  // Spring physics for eyes
   const springConfig = { damping: 25, stiffness: 150 };
   const pupilX = useSpring(useTransform(mouseX, [-500, 500], [-6, 6]), springConfig);
   const pupilY = useSpring(useTransform(mouseY, [-500, 500], [-6, 6]), springConfig);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // If bug exists, eyes track bug
       if (bug) {
-        // Estimate conversion to match pupil movement range
         const targetX = (bug.x - 50) * 10; 
         const targetY = (bug.y - 50) * 10;
         mouseX.set(targetX);
         mouseY.set(targetY);
       } else {
-        // Track mouse
-        const centerX = window.innerWidth - 100; // Approx frog X position
-        const centerY = 150; // Approx frog Y position
+        const centerX = window.innerWidth - 100;
+        const centerY = 150; 
         mouseX.set(e.clientX - centerX);
         mouseY.set(e.clientY - centerY);
       }
     };
-
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [mouseX, mouseY, bug]);
 
-  // --- BLINKING LOGIC ---
   useEffect(() => {
     const blinkLoop = () => {
       setIsBlinking(true);
@@ -288,14 +269,7 @@ const CyberFrog = () => {
     return () => clearTimeout(timeoutId);
   }, []);
 
-  // --- INTERACTION LOGIC ---
-  const messages = [
-    "SYSTEM: ONLINE 🐸",
-    "TARGET: LOCKED 🎯",
-    "BUG: ELIMINATED 🦟",
-    "YUMMY.DAT LOADED"
-  ];
-
+  const messages = ["SYSTEM: ONLINE 🐸", "TARGET: LOCKED 🎯", "BUG: ELIMINATED 🦟", "YUMMY.DAT LOADED"];
   const handleRibbit = () => {
     if (isRibbiting) return;
     setMsgIndex((prev) => (prev + 1) % messages.length);
@@ -310,12 +284,8 @@ const CyberFrog = () => {
       dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
       dragElastic={0.2}
       whileDrag={{ scale: 1.2, rotate: 5 }}
-      animate={{ 
-        y: [0, -15, 0],
-      }}
-      transition={{ 
-        y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-      }}
+      animate={{ y: [0, -15, 0] }}
+      transition={{ y: { duration: 3, repeat: Infinity, ease: "easeInOut" } }}
       onClick={handleRibbit}
       whileHover={{ scale: 1.05 }}
     >
@@ -328,8 +298,6 @@ const CyberFrog = () => {
             className="absolute z-40 pointer-events-none"
           >
             <div className="bg-slate-900/90 text-cyan-400 px-4 py-2 rounded-lg border border-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.5)] whitespace-nowrap backdrop-blur-sm relative">
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-500 opacity-50 animate-pulse" />
-                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-cyan-500 opacity-50 animate-pulse" />
                 <span className="font-mono font-bold text-xs tracking-widest flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-ping" />
                   {messages[msgIndex]}
@@ -347,57 +315,27 @@ const CyberFrog = () => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ filter: 'drop-shadow(0 15px 25px rgba(6, 182, 212, 0.25))' }}
-        animate={isRibbiting ? {
-          rotate: [-2, 2, -2, 2, 0],
-          scale: [1, 1.1, 0.95, 1]
-        } : {}}
+        animate={isRibbiting ? { rotate: [-2, 2, -2, 2, 0], scale: [1, 1.1, 0.95, 1] } : {}}
         transition={{ type: "spring", stiffness: 300, damping: 10 }}
       >
-        {/* === LEGS LAYER === */}
-        <motion.g
-          animate={{ y: [0, 3, 0], rotate: [0, 2, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <path d="M15 95C8 95 3 105 8 110" stroke="#064e3b" strokeWidth="6" strokeLinecap="round" />
+        <motion.g animate={{ y: [0, 3, 0], rotate: [0, 2, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
+          <path d="M15 95C8 95 3 105 8 110" stroke="#064e3b" strokeWidth="6" strokeLinecap="round" fill="#166534" />
           <path d="M85 95C92 95 97 105 92 110" stroke="#064e3b" strokeWidth="6" strokeLinecap="round" />
           <ellipse cx="12" cy="108" rx="5" ry="3" fill="#064e3b" />
           <ellipse cx="88" cy="108" rx="5" ry="3" fill="#064e3b" />
         </motion.g>
-
-        <motion.g
-          animate={{ y: [0, -2, 0] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-        >
+        <motion.g animate={{ y: [0, -2, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}>
           <ellipse cx="25" cy="80" rx="8" ry="12" fill="#15803d" />
           <ellipse cx="75" cy="80" rx="8" ry="12" fill="#15803d" />
           <ellipse cx="25" cy="88" rx="6" ry="4" fill="#4ade80" />
           <ellipse cx="75" cy="88" rx="6" ry="4" fill="#4ade80" />
         </motion.g>
-
-        {/* === BODY & BREATHING === */}
         <ellipse cx="50" cy="70" rx="38" ry="30" fill="#16a34a" />
-        <motion.ellipse 
-          cx="50" cy="72" rx="20" ry="15" 
-          fill="#86efac"
-          animate={isRibbiting ? {
-            rx: [20, 35, 20],
-            ry: [15, 28, 15],
-            fill: ["#86efac", "#4ade80", "#86efac"]
-          } : {
-            rx: [20, 22, 20],
-            ry: [15, 17, 15],
-            fillOpacity: [0.6, 0.8, 0.6]
-          }}
-          transition={isRibbiting ? { duration: 0.4, repeat: 3 } : { duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        />
+        <motion.ellipse cx="50" cy="72" rx="20" ry="15" fill="#86efac" animate={isRibbiting ? { rx: [20, 35, 20], ry: [15, 28, 15], fill: ["#86efac", "#4ade80", "#86efac"] } : { rx: [20, 22, 20], ry: [15, 17, 15], fillOpacity: [0.6, 0.8, 0.6] }} transition={isRibbiting ? { duration: 0.4, repeat: 3 } : { duration: 2, repeat: Infinity, ease: "easeInOut" }} />
         <path d="M35 70 L65 70 M40 75 L60 75 M45 80 L55 80" stroke="#14532d" strokeWidth="2" strokeOpacity="0.3" strokeLinecap="round" />
-
-        {/* === HEAD === */}
         <circle cx="32" cy="50" r="16" fill="#16a34a" />
         <circle cx="68" cy="50" r="16" fill="#16a34a" />
         <ellipse cx="50" cy="55" rx="20" ry="18" fill="#16a34a" />
-
-        {/* === EYES (TRACKING) === */}
         <g>
             <circle cx="32" cy="50" r="11" fill="#e2e8f0" />
             <circle cx="68" cy="50" r="11" fill="#e2e8f0" />
@@ -408,21 +346,9 @@ const CyberFrog = () => {
                 <circle cx="70" cy="48" r="2.5" fill="white" opacity="0.9" />
             </motion.g>
         </g>
-
-        {/* === EYELIDS === */}
-        <motion.path d="M20 50 Q32 38 44 50" stroke="#15803d" strokeWidth="12" strokeLinecap="round" fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: isBlinking ? 1 : 0, opacity: isBlinking ? 1 : 0 }} transition={{ duration: 0.1 }} />
-        <motion.path d="M56 50 Q68 38 80 50" stroke="#15803d" strokeWidth="12" strokeLinecap="round" fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: isBlinking ? 1 : 0, opacity: isBlinking ? 1 : 0 }} transition={{ duration: 0.1 }} />
-
-        {/* === GOGGLES === */}
-        <motion.g
-           animate={{ opacity: [0.8, 1, 0.8] }}
-           transition={{ duration: 3, repeat: Infinity }}
-           whileHover={{ scale: 1.05, opacity: 1 }}
-        >
+        <motion.path d="M20 50 Q32 38 44 50" stroke="#15803d" strokeWidth="12" strokeLinecap="round" fill="none" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: isBlinking ? 1 : 0, opacity: isBlinking ? 1 : 0 }} transition={{ duration: 0.1 }} />
+        <motion.path d="M56 50 Q68 38 80 50" stroke="#15803d" strokeWidth="12" strokeLinecap="round" fill="none" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: isBlinking ? 1 : 0, opacity: isBlinking ? 1 : 0 }} transition={{ duration: 0.1 }} />
+        <motion.g animate={{ opacity: [0.8, 1, 0.8] }} transition={{ duration: 3, repeat: Infinity }} whileHover={{ scale: 1.05, opacity: 1 }}>
             <rect x="18" y="42" width="64" height="16" rx="6" fill="rgba(15, 23, 42, 0.7)" stroke="#06b6d4" strokeWidth="2" />
             <path d="M22 46H30" stroke="#06b6d4" strokeWidth="1" strokeOpacity="0.5" />
             <path d="M70 46H78" stroke="#06b6d4" strokeWidth="1" strokeOpacity="0.5" />
@@ -430,50 +356,13 @@ const CyberFrog = () => {
             <path d="M18 50H14" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
             <path d="M82 50H86" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
         </motion.g>
-
-        {/* === MOUTH === */}
-        <motion.path 
-          d="M38 75 Q50 79 62 75" 
-          stroke="#14532d" 
-          strokeWidth="3" 
-          strokeLinecap="round" 
-          fill="none" 
-          animate={bug && bug.status === 'being_eaten' ? { d: "M38 75 Q50 85 62 75" } : { d: "M38 75 Q50 79 62 75" }}
-        />
-
-        {/* === TONGUE (Z-Index Top) === */}
-        {/* Dipindahkan ke sini supaya di atas badan (visible) */}
+        <motion.path d="M38 75 Q50 79 62 75" stroke="#14532d" strokeWidth="3" strokeLinecap="round" fill="none" animate={bug && bug.status === 'being_eaten' ? { d: "M38 75 Q50 85 62 75" } : { d: "M38 75 Q50 79 62 75" }} />
         {bug && bug.status === 'being_eaten' && (
-           <motion.path
-             d={`M50 75 Q ${50 + (bug.x - 50)/2} ${75 + (bug.y - 75)/2 - 15} ${bug.x} ${bug.y}`}
-             stroke="#ec4899" 
-             strokeWidth="4"
-             strokeLinecap="round"
-             fill="none"
-             initial={{ pathLength: 0 }}
-             animate={{ pathLength: [0, 1, 0] }}
-             transition={{ duration: 0.3, times: [0, 0.5, 1] }}
-           />
+           <motion.path d={`M50 75 Q ${50 + (bug.x - 50)/2} ${75 + (bug.y - 75)/2 - 15} ${bug.x} ${bug.y}`} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }} transition={{ duration: 0.3, times: [0, 0.5, 1] }} />
         )}
-
-        {/* === CYBER BUG VISUAL === */}
         <AnimatePresence>
             {bug && bug.status === 'flying' && (
-                <motion.g
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ 
-                        scale: 1, 
-                        opacity: 1,
-                        x: [bug.x - 2, bug.x + 2, bug.x - 2], // Buzzing effect
-                        y: [bug.y - 2, bug.y + 2, bug.y - 2]
-                    }}
-                    exit={{ scale: 0, opacity: 0, fill: "red" }} // Explode/vanish
-                    transition={{ 
-                        opacity: { duration: 0.2 },
-                        x: { duration: 0.2, repeat: Infinity },
-                        y: { duration: 0.3, repeat: Infinity }
-                    }}
-                >
+                <motion.g initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1, x: [bug.x - 2, bug.x + 2, bug.x - 2], y: [bug.y - 2, bug.y + 2, bug.y - 2] }} exit={{ scale: 0, opacity: 0, fill: "red" }} transition={{ opacity: { duration: 0.2 }, x: { duration: 0.2, repeat: Infinity }, y: { duration: 0.3, repeat: Infinity } }}>
                     <circle cx="0" cy="0" r="3" fill="#1e293b" />
                     <ellipse cx="-3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
                     <ellipse cx="3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
@@ -483,7 +372,6 @@ const CyberFrog = () => {
                 </motion.g>
             )}
         </AnimatePresence>
-
       </motion.svg>
     </motion.div>
   );
@@ -499,79 +387,67 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   // --- MOTION VALUES FOR BUG POSITION (To Sync Eyes) ---
   const bugX = useMotionValue(50);
   const bugY = useMotionValue(50);
+  const [tonguePath, setTonguePath] = useState("M50 75 Q50 75 50 75");
 
-  // --- DERIVED EYE POSITION (Eyes track the bugX/bugY directly) ---
-  // Range bug: 0-100. Eye range: -6 to 6 px.
   const eyeX = useTransform(bugX, [0, 100], [-6, 6]);
   const eyeY = useTransform(bugY, [0, 100], [-6, 6]);
 
-  // --- DERIVED TONGUE PATH (Tongue connected to bug) ---
-  const tonguePath = useTransform([bugX, bugY], (values: number[]) => {
-     // Mouth fixed at 50, 75
-     const mx = 50;
-     const my = 75;
-     // Control point for curve
-     const bxNum = typeof values[0] === 'number' ? values[0] : 50;
-     const byNum = typeof values[1] === 'number' ? values[1] : 75;
-     const cx = mx + (bxNum - mx) / 2;
-     const cy = my + (byNum - my) / 2 - 10;
-     return `M${mx} ${my} Q ${cx} ${cy} ${bxNum} ${byNum}`;
-  });
+  // Update tongue path when bug position changes
+  useEffect(() => {
+    const unsubscribeX = bugX.onChange((bx: number) => {
+      const by = bugY.get();
+      const mx = 50;
+      const my = 75;
+      const cx = mx + (bx - mx) / 2;
+      const cy = my + (by - my) / 2 - 10;
+      setTonguePath(`M${mx} ${my} Q ${cx} ${cy} ${bx} ${by}`);
+    });
 
-  // Animate bug flying around smoothly
+    const unsubscribeY = bugY.onChange((by: number) => {
+      const bx = bugX.get();
+      const mx = 50;
+      const my = 75;
+      const cx = mx + (bx - mx) / 2;
+      const cy = my + (by - my) / 2 - 10;
+      setTonguePath(`M${mx} ${my} Q ${cx} ${cy} ${bx} ${by}`);
+    });
+
+    return () => {
+      unsubscribeX();
+      unsubscribeY();
+    };
+  }, [bugX, bugY]);
+
   useEffect(() => {
     if (!isOpen || isFeeding) return;
-
     let controlsX: any, controlsY: any;
-
     const fly = () => {
       const nextX = Math.random() * 80 + 10;
       const nextY = Math.random() * 70 + 15;
-      
-      // Randomize speed slightly for realism (1.5s - 2.5s)
       const duration = Math.random() * 1 + 1.5;
-
       controlsX = animate(bugX, nextX, { duration, ease: "easeInOut" });
       controlsY = animate(bugY, nextY, { duration, ease: "easeInOut", onComplete: fly });
     };
-
     fly();
-
-    return () => {
-      if(controlsX) controlsX.stop();
-      if(controlsY) controlsY.stop();
-    };
+    return () => { if(controlsX) controlsX.stop(); if(controlsY) controlsY.stop(); };
   }, [isOpen, isFeeding, bugX, bugY]);
 
   const handleBugClick = () => {
     if (isFeeding) return;
-    
-    // 1. Trigger feeding sequence
     setIsFeeding(true);
     setIsMouthOpen(true);
-    
-    // 2. Animate bug to mouth quickly
-    // Retract tongue effect (bug moves to mouth)
     animate(bugX, 50, { duration: 0.4, ease: "backIn" });
     animate(bugY, 75, { duration: 0.4, ease: "backIn", onComplete: () => {
-        // 3. Start Chewing (Loading Phase)
         setIsSwallowing(true);
-        
-        // 4. Simulate Network Delay (Random 2s - 5s)
-        const networkDelay = Math.random() * 3000 + 2000;
-
         setTimeout(() => {
-          // 5. Success!
           setIsSwallowing(false);
           setIsMouthOpen(false);
           setShowAccessGranted(true);
-          
-          // 6. Navigate
           setTimeout(() => {
-            window.location.href = "#team";
+            window.location.href = "/team"; 
             onClose();
-          }, 1000);
-        }, networkDelay);
+          }, 300); 
+        }, 1000); 
     }});
   };
 
@@ -579,87 +455,32 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md"
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.8, opacity: 0 }}
-          className="relative w-full max-w-2xl h-[600px] flex items-center justify-center"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Instructions */}
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="absolute top-8 left-1/2 -translate-x-1/2 text-center z-10"
-          >
-            <p className="text-white text-lg font-semibold mb-2">
-              Feed the Cyber Frog to access the team!
-            </p>
-            <p className="text-cyan-400 text-sm">
-              Click the glowing Data Bug 🐛
-            </p>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md" onClick={onClose}>
+        <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} className="relative w-full max-w-2xl h-[600px] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+          <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="absolute top-8 left-1/2 -translate-x-1/2 text-center z-10">
+            <p className="text-white text-lg font-semibold mb-2">Feed the Cyber Frog to access the team!</p>
+            <p className="text-cyan-400 text-sm">Click the glowing Data Bug 🐛</p>
           </motion.div>
-
-          {/* Large Cyber Frog */}
           <div className="relative">
-            <motion.svg
-              width="300"
-              height="360"
-              viewBox="0 0 100 120"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="relative z-20"
-              // Removed whole body chewing animation to keep frog steady
-            >
-              {/* BACK LEGS */}
+            <motion.svg width="300" height="360" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-20">
               <path d="M15 95C8 95 3 105 8 110" stroke="#166534" strokeWidth="6" strokeLinecap="round" fill="#166534" />
               <path d="M85 95C92 95 97 105 92 110" stroke="#166534" strokeWidth="6" strokeLinecap="round" fill="#166534" />
               <ellipse cx="12" cy="108" rx="5" ry="3" fill="#166534" />
               <ellipse cx="88" cy="108" rx="5" ry="3" fill="#166534" />
-
-              {/* FRONT LEGS */}
               <ellipse cx="25" cy="80" rx="8" ry="12" fill="#22c55e" />
               <ellipse cx="75" cy="80" rx="8" ry="12" fill="#22c55e" />
               <ellipse cx="25" cy="88" rx="6" ry="4" fill="#86efac" />
               <ellipse cx="75" cy="88" rx="6" ry="4" fill="#86efac" />
-
-              {/* BODY */}
               <ellipse cx="50" cy="70" rx="38" ry="30" fill="#22c55e" />
-              
-              {/* BELLY / THROAT (Animated when swallowing) */}
-              <motion.ellipse 
-                cx="50" cy="75" 
-                rx="28" ry="22" 
-                fill="#86efac" 
-                animate={isSwallowing ? {
-                  ry: [22, 24, 22],
-                  rx: [28, 29, 28],
-                } : { ry: 22, rx: 28 }}
-                transition={{ duration: 0.3, repeat: Infinity, ease: "easeInOut" }}
-              />
-              
+              <motion.ellipse cx="50" cy="75" rx="28" ry="22" fill="#86efac" animate={isSwallowing ? { ry: [22, 24, 22], rx: [28, 29, 28] } : { ry: 22, rx: 28 }} transition={{ duration: 0.3, repeat: Infinity, ease: "easeInOut" }} />
               <ellipse cx="45" cy="68" rx="12" ry="8" fill="#4ade80" opacity="0.3" />
               <ellipse cx="55" cy="68" rx="12" ry="8" fill="#4ade80" opacity="0.3" />
-
-              {/* HEAD */}
-              <circle cx="32" cy="50" r="16" fill="#22c55e" />
-              <circle cx="68" cy="50" r="16" fill="#22c55e" />
-              <ellipse cx="50" cy="55" rx="20" ry="18" fill="#22c55e" />
-
-              {/* EYES CONTAINER */}
+              <circle cx="32" cy="50" r="16" fill="#16a34a" />
+              <circle cx="68" cy="50" r="16" fill="#16a34a" />
+              <ellipse cx="50" cy="55" rx="20" ry="18" fill="#16a34a" />
               <g>
-                  {/* Sclera */}
                   <circle cx="32" cy="50" r="11" fill="white" />
                   <circle cx="68" cy="50" r="11" fill="white" />
-                  
-                  {/* PUPILS (PERFECTLY SYNCED TRACKING) */}
                   <motion.g style={{ x: eyeX, y: eyeY }}>
                       <circle cx="32" cy="50" r="5" fill="#0f172a" />
                       <circle cx="68" cy="50" r="5" fill="#0f172a" />
@@ -667,8 +488,6 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                       <circle cx="70" cy="48" r="2" fill="white" opacity="0.8" />
                   </motion.g>
               </g>
-
-              {/* CYBER GOGGLES */}
               <rect x="18" y="42" width="64" height="16" rx="6" fill="rgba(15, 23, 42, 0.8)" stroke="#0891b2" strokeWidth="2" />
               <ellipse cx="32" cy="50" rx="12" ry="10" fill="rgba(6, 182, 212, 0.3)" />
               <ellipse cx="68" cy="50" rx="12" ry="10" fill="rgba(6, 182, 212, 0.3)" />
@@ -676,56 +495,14 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
               <ellipse cx="68" cy="50" rx="8" ry="6" fill="rgba(6, 182, 212, 0.6)" />
               <path d="M18 50H10" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
               <path d="M82 50H90" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
-
-              {/* MOUTH - Opens when feeding & Chews when swallowing */}
-              <motion.path
-                // Base mouth shape
-                d="M38 75 Q50 80 62 75"
-                stroke="#14532d"
-                strokeLinecap="round"
-                fill="none"
-                animate={
-                  isMouthOpen 
-                    ? { d: "M38 75 Q50 85 62 75", strokeWidth: 4 } // Mouth Open (Feeding)
-                    : isSwallowing 
-                      ? { 
-                          d: ["M38 75 Q50 80 62 75", "M38 75 Q50 83 62 75", "M38 75 Q50 80 62 75"], // Chewing loop
-                          strokeWidth: 3,
-                          transition: { duration: 0.3, repeat: Infinity, ease: "easeInOut" }
-                        }
-                      : { d: "M38 75 Q50 80 62 75", strokeWidth: 3 } // Idle
-                }
-              />
-
-              {/* TONGUE - Triggered when feeding (DYNAMIC PATH) */}
+              <motion.path d="M38 75 Q50 80 62 75" stroke="#14532d" strokeLinecap="round" fill="none" animate={isMouthOpen ? { d: "M38 75 Q50 85 62 75", strokeWidth: 4 } : isSwallowing ? { d: ["M38 75 Q50 80 62 75", "M38 75 Q50 83 62 75", "M38 75 Q50 80 62 75"], strokeWidth: 3, transition: { duration: 0.3, repeat: Infinity, ease: "easeInOut" } } : { d: "M38 75 Q50 80 62 75", strokeWidth: 3 }} />
               {isFeeding && !showAccessGranted && (
-                 <motion.path
-                   d={tonguePath} // Path is linked to bug position!
-                   stroke="#ec4899"
-                   strokeWidth="4"
-                   strokeLinecap="round"
-                   fill="none"
-                   // Initial shoot out effect
-                   initial={{ pathLength: 0 }}
-                   animate={{ pathLength: 1 }}
-                   transition={{ duration: 0.1 }}
-                 />
+                 <motion.path d={tonguePath} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.1 }} />
               )}
-
-              {/* CHEEKS */}
               <circle cx="26" cy="68" r="5" fill="#f472b6" opacity="0.5" />
               <circle cx="74" cy="68" r="5" fill="#f472b6" opacity="0.5" />
-
-              {/* CYBER BUG INSIDE SVG - Driven by Motion Values */}
               {!showAccessGranted && (
-                 <motion.g
-                   onClick={handleBugClick}
-                   style={{ x: bugX, y: bugY, cursor: 'pointer' }}
-                   animate={{ 
-                      opacity: isSwallowing ? 0 : 1, // Hide bug when swallowing
-                      scale: isSwallowing ? 0 : 1
-                   }}
-                 >
+                 <motion.g onClick={handleBugClick} style={{ x: bugX, y: bugY, cursor: 'pointer' }} animate={{ opacity: isSwallowing ? 0 : 1, scale: isSwallowing ? 0 : 1 }}>
                     <circle cx="0" cy="0" r="3" fill="#1e293b" />
                     <ellipse cx="-3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
                     <ellipse cx="3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
@@ -735,31 +512,380 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                  </motion.g>
               )}
             </motion.svg>
-
-            {/* ACCESS GRANTED Text */}
             {showAccessGranted && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: -80 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40"
-              >
+              <motion.div initial={{ opacity: 0, scale: 0, y: 20 }} animate={{ opacity: 1, scale: 1, y: -80 }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40">
                 <div className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-8 py-4 rounded-2xl font-bold text-2xl shadow-[0_0_30px_rgba(6,182,212,0.8)] border-2 border-white">
                   ACCESS GRANTED! 🎉
                 </div>
               </motion.div>
             )}
           </div>
-
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-50"
-          >
+          <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-50">
             <X size={24} />
           </button>
         </motion.div>
       </motion.div>
     </AnimatePresence>
+  );
+};
+
+// ================= WORKFLOW SECTION (NEW) =================
+const WorkflowSection = () => {
+    const steps = [
+        {
+            icon: <Search className="w-8 h-8 text-cyan-400" />,
+            title: "Discovery & Strategy",
+            description: "We dive deep into your business goals, target audience, and market landscape to build a solid roadmap."
+        },
+        {
+            icon: <Code className="w-8 h-8 text-teal-400" />,
+            title: "Design & Development",
+            description: "Our experts craft pixel-perfect designs and robust code, ensuring scalable and high-performance solutions."
+        },
+        {
+            icon: <CheckCircle2 className="w-8 h-8 text-blue-400" />,
+            title: "Testing & QA",
+            description: "Rigorous testing across devices and browsers to ensure a bug-free, seamless user experience."
+        },
+        {
+            icon: <Rocket className="w-8 h-8 text-purple-400" />,
+            title: "Launch & Growth",
+            description: "We help you launch with confidence and provide ongoing support to scale your digital presence."
+        }
+    ];
+
+    return (
+        <section id="process" className="py-20 sm:py-32 bg-slate-950 relative overflow-hidden">
+             {/* Background Elements */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-900/20 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-900/20 rounded-full blur-3xl"></div>
+            </div>
+
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-center max-w-3xl mx-auto mb-20"
+                >
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">How We Work</h2>
+                    <p className="text-lg text-slate-400">Our proven process ensures transparency and results at every step.</p>
+                </motion.div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {steps.map((step, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1 }}
+                            className="relative group"
+                        >
+                            <div className="p-8 rounded-3xl bg-slate-900/50 border border-slate-800 hover:border-cyan-500/30 transition-all duration-300 hover:-translate-y-1 h-full">
+                                <div className="mb-6 p-4 rounded-2xl bg-slate-800/50 w-fit group-hover:bg-slate-800 transition-colors">
+                                    {step.icon}
+                                </div>
+                                <h3 className="text-xl font-bold mb-3 text-white">{step.title}</h3>
+                                <p className="text-slate-400 text-sm leading-relaxed">{step.description}</p>
+                            </div>
+                            {/* Connector Line (Desktop) */}
+                            {index < steps.length - 1 && (
+                                <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-slate-800 z-0"></div>
+                            )}
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+// ================= TESTIMONIALS SECTION (NEW) =================
+const TestimonialsSection = () => {
+    const testimonials = [
+        {
+            quote: "Swakarsa transformed our online presence. Their attention to detail and technical expertise is unmatched.",
+            author: "Budi Santoso",
+            role: "CEO",
+            company: "CV. Alumka Cipta Prima"
+        },
+        {
+            quote: "The inventory system they built saved us hundreds of hours. Highly recommended for custom software solutions.",
+            author: "Siti Rahma",
+            role: "Manager",
+            company: "Maju Mobilindo"
+        },
+        {
+            quote: "Professional, timely, and creative. They understood our brand vision perfectly from day one.",
+            author: "Hendrik Wijaya",
+            role: "Owner",
+            company: "Hotel Dwipa"
+        }
+    ];
+
+    return (
+        <section className="py-20 sm:py-32 bg-slate-900">
+            <div className="container mx-auto px-4 sm:px-6">
+                 <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-center mb-16"
+                >
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">What Our Clients Say</h2>
+                </motion.div>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                    {testimonials.map((item, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1 }}
+                            className="p-8 rounded-3xl bg-slate-950 border border-slate-800 relative"
+                        >
+                            <MessageSquareQuote className="absolute top-8 right-8 text-slate-800 w-12 h-12" />
+                            <p className="text-slate-300 mb-8 relative z-10 leading-relaxed">"{item.quote}"</p>
+                            <div>
+                                <h4 className="font-bold text-white">{item.author}</h4>
+                                <p className="text-sm text-cyan-400">{item.role}, {item.company}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+// ================= FAQ SECTION (NEW) =================
+const FAQSection = () => {
+    const faqs = [
+        {
+            question: "What services do you offer?",
+            answer: "We offer end-to-end digital solutions including Custom Web Development, Inventory Systems, POS Systems, Mobile Apps, UI/UX Design, and Digital Marketing strategies."
+        },
+        {
+            question: "How long does a typical project take?",
+            answer: "Timeline varies by complexity. A simple company profile takes 2-4 weeks, while complex systems like ERP or POS can take 8-12 weeks. We provide a detailed timeline after the initial consultation."
+        },
+        {
+            question: "Do you provide support after launch?",
+            answer: "Yes! We offer 3 months of free maintenance for bugs and minor updates. After that, we have flexible retainer packages for ongoing support and server management."
+        },
+        {
+            question: "What technologies do you use?",
+            answer: "We specialize in modern stacks: Next.js, React, Node.js, Python, PostgreSQL, and Cloud infrastructure to ensure speed, security, and scalability."
+        }
+    ];
+
+    const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+    return (
+        <section id="faq" className="py-20 sm:py-32 bg-slate-950">
+            <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-center mb-16"
+                >
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">Frequently Asked Questions</h2>
+                </motion.div>
+
+                <div className="space-y-4">
+                    {faqs.map((faq, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1 }}
+                            className="border border-slate-800 rounded-2xl bg-slate-900/50 overflow-hidden"
+                        >
+                            <button
+                                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                                className="w-full flex items-center justify-between p-6 text-left hover:bg-slate-800/50 transition-colors"
+                            >
+                                <span className="font-semibold text-white text-lg">{faq.question}</span>
+                                {openIndex === index ? <Minus className="text-cyan-400" /> : <Plus className="text-slate-400" />}
+                            </button>
+                            <AnimatePresence>
+                                {openIndex === index && (
+                                    <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        className="overflow-hidden"
+                                    >
+                                        <div className="p-6 pt-0 text-slate-400 leading-relaxed">
+                                            {faq.answer}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+// ================= SKILLS CAROUSEL COMPONENT =================
+const SkillsCarousel = ({ skills, onClick }: { skills: any[], onClick: (skill: any) => void }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Auto scroll - Faster duration (2000ms)
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % skills.length);
+    }, 2000); // Speed up to 2 seconds
+    return () => clearInterval(interval);
+  }, [skills.length, isPaused]);
+
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    // Lower threshold for easier swiping
+    if (info.offset.x > 20) {
+      setCurrentIndex((prev) => (prev - 1 + skills.length) % skills.length);
+    } else if (info.offset.x < -20) {
+      setCurrentIndex((prev) => (prev + 1) % skills.length);
+    }
+  };
+
+  const getPosition = (index: number) => {
+    const diff = (index - currentIndex + skills.length) % skills.length;
+    
+    if (diff === 0) return 'center';
+    if (diff === 1) return 'right';
+    if (diff === skills.length - 1) return 'left';
+    return 'hidden';
+  };
+
+  return (
+    <div 
+      className="relative h-[400px] w-full flex items-center justify-center overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      // Enable touch interaction for mobile pause
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
+    >
+      <div className="absolute w-full h-full flex items-center justify-center">
+        <AnimatePresence initial={false} mode="popLayout">
+          {skills.map((skill, index) => {
+            const position = getPosition(index);
+            if (position === 'hidden') return null;
+
+            let x = 0;
+            let scale = 0.8;
+            let opacity = 0;
+            let zIndex = 0;
+            let blur = 0;
+
+            // Define offsets based on screen size - Increased for wider spread
+            const offset = isMobile ? 260 : 420; 
+
+            if (position === 'center') {
+              x = 0;
+              scale = 1;
+              opacity = 1;
+              zIndex = 10;
+              blur = 0;
+            } else if (position === 'left') {
+              x = -offset;
+              scale = 0.85;
+              opacity = 0.5; // Slightly less opaque
+              zIndex = 5;
+              blur = 3; // Slight blur
+            } else if (position === 'right') {
+              x = offset;
+              scale = 0.85;
+              opacity = 0.5;
+              zIndex = 5;
+              blur = 3;
+            }
+
+            return (
+              <motion.div
+                key={skill.id}
+                layoutId={`card-${skill.id}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ 
+                  x, 
+                  scale, 
+                  opacity, 
+                  zIndex,
+                  filter: `blur(${blur}px)` 
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300, 
+                  damping: 30 
+                }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={handleDragEnd}
+                onClick={() => {
+                  if (position === 'center') onClick(skill);
+                  else setCurrentIndex(index);
+                }}
+                className="absolute w-[280px] sm:w-[320px] cursor-pointer"
+                style={{ 
+                   touchAction: 'pan-y'
+                }}
+              >
+                {/* Card Content unchanged */}
+                <div className="rounded-2xl overflow-hidden group relative flex flex-col h-full bg-slate-900/80 border border-slate-700 hover:border-cyan-500/50 shadow-2xl transition-colors duration-300">
+                    <div className="relative h-48 overflow-hidden">
+                      <img 
+                        src={skill.image} 
+                        alt={skill.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-slate-900/80 text-white border border-slate-700">
+                        {skill.category}
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="font-bold text-xl mb-2 text-white truncate">{skill.title}</h3>
+                      <p className="text-sm text-slate-400 line-clamp-2">{skill.shortDescription}</p>
+                    </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
+      {/* Indicators */}
+      <div className="absolute bottom-4 flex gap-2 z-20">
+        {skills.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentIndex(i)}
+            className={`w-2 h-2 rounded-full transition-all ${
+              i === currentIndex ? "bg-cyan-500 w-4" : "bg-slate-600"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 
@@ -1182,57 +1308,6 @@ const PortfolioModalContent = ({ project }: any) => (
   </div>
 );
 
-// Skill Card with scroll animation
-const SkillCard = ({ skill, index, onClick }: any) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{ duration: 0.5, delay: index * 0.1 }}
-    whileHover={{ y: -8, scale: 1.02 }}
-    className="rounded-2xl overflow-hidden cursor-pointer group relative flex flex-col h-full bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] transition-all duration-300"
-    onClick={() => onClick(skill)}
-  >
-    <div className="relative h-48 overflow-hidden">
-      <img 
-        src={skill.image} 
-        alt={skill.title}
-        loading="lazy"
-        decoding="async"
-        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-      
-      <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold tracking-wide backdrop-blur-md shadow-lg bg-slate-900/80 text-white border border-slate-700">
-        {skill.category}
-      </div>
-    </div>
-
-    <div className="p-6 flex flex-col flex-grow">
-      <h3 className="font-bold text-xl mb-2 line-clamp-1 group-hover:text-cyan-400 transition-colors text-white">
-        {skill.title}
-      </h3>
-      <p className="text-sm leading-relaxed line-clamp-2 mb-6 flex-grow text-slate-400">
-        {skill.shortDescription}
-      </p>
-      
-      <div className="flex flex-wrap gap-2 mb-6">
-        {skill.tags.slice(0, 3).map((tag: string, idx: number) => (
-          <span key={idx} className="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300">
-            {tag}
-          </span>
-        ))}
-      </div>
-      
-      <div className="flex items-center justify-between pt-4 border-t border-slate-800 mt-auto">
-        <span className="text-sm font-semibold flex items-center gap-1 text-cyan-400">
-          Learn More <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-        </span>
-      </div>
-    </div>
-  </motion.div>
-);
-
 // Portfolio Card
 const PortfolioCard = ({ project, index, onClick }: any) => (
   <motion.div
@@ -1569,8 +1644,10 @@ export default function LandingPage() {
     }
   ];
 
+  // ... existing portfolioItems and effects ...
   // Portfolio data
   const portfolioItems = [
+    // ... existing items (kept same) ...
     {
       id: 1,
       title: "Maju Mobilindo",
@@ -1834,15 +1911,9 @@ export default function LandingPage() {
 
       {/* ================= NEW HERO SECTION ================= */}
       <section id="home" className="relative min-h-screen flex items-center justify-center pt-32 pb-32 overflow-hidden z-10 bg-slate-950">
-        {/* Ocean Waves Canvas Background - Highly Performant */}
         <OceanWaves />
-
-        {/* Cyber Frog - Interactive Element (Now uses Updated V3 Animation) */}
         <CyberFrog />
-
-        {/* Hero Content z-10 */}
         <div className="container relative z-10 px-4 sm:px-6 text-center">
-          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1857,7 +1928,6 @@ export default function LandingPage() {
                  Digital Agency & Freelancer Collective
              </div>
           </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -1869,7 +1939,6 @@ export default function LandingPage() {
               Digital
             </span>
           </motion.h1>
-
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1887,7 +1956,6 @@ export default function LandingPage() {
               increase sales
             </span>.
           </motion.p>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1906,8 +1974,6 @@ export default function LandingPage() {
             </a>
           </motion.div>
         </div>
-        
-        {/* Scroll Indicator */}
         <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
@@ -1923,7 +1989,8 @@ export default function LandingPage() {
 
       {/* ================= ABOUT ================= */}
       <section id="about" className="container mx-auto px-4 sm:px-6 py-20 sm:py-32">
-        <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+         {/* ... (About content remains same) ... */}
+          <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -1980,7 +2047,6 @@ export default function LandingPage() {
                             <p className="text-sm text-slate-400">Custom web apps, landing pages, and complex management systems.</p>
                         </div>
                     </div>
-                    
                     <div className="flex items-start gap-4">
                         <div className="p-3 rounded-lg bg-teal-500/20 text-teal-400">
                             <Sparkles size={24} />
@@ -1990,7 +2056,6 @@ export default function LandingPage() {
                             <p className="text-sm text-slate-400">SEO, Ads, and social media strategies to boost your online presence.</p>
                         </div>
                     </div>
-                    
                     <div className="flex items-start gap-4">
                         <div className="p-3 rounded-lg bg-blue-500/20 text-blue-400">
                             <Cpu size={24} />
@@ -2006,44 +2071,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= TEAM SECTION ================= */}
-      <section id="team" className="py-20 sm:py-32 bg-slate-900/30">
-        <div className="container mx-auto px-4 sm:px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5 }}
-              className="text-center max-w-3xl mx-auto mb-16"
-            >
-                <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-                Meet Our Leadership
-                </h2>
-                <p className="text-lg text-slate-400">
-                The creative minds and technical experts behind Swakarsa Digital.
-                </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-8">
-            {teamMembers.map((member, index) => (
-                <TeamMember 
-                key={`${member.name}-${index}`} 
-                member={member} 
-                index={index} 
-                />
-            ))}
-            </div>
-            
-            {/* View All Teams Button */}
-            <div className="text-center mt-12">
-                <a href="/team" onClick={handleTeamClick}>
-                    <Button variant="outline" size="lg">
-                        View All Teams & CVs
-                    </Button>
-                </a>
-            </div>
-        </div>
-      </section>
+      {/* ================= WORKFLOW SECTION (NEW) ================= */}
+      <WorkflowSection />
 
       {/* ================= SKILLS ================= */}
       <section id="services" className="container mx-auto px-4 sm:px-6 py-20 sm:py-32">
@@ -2062,16 +2091,8 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {skills.map((skill, index) => (
-              <SkillCard 
-                key={skill.id}
-                skill={skill}
-                index={index}
-                onClick={handleSkillClick}
-              />
-            ))}
-          </div>
+          {/* New 3D Carousel Component for Skills */}
+          <SkillsCarousel skills={skills} onClick={handleSkillClick} />
 
           {/* Skills Summary */}
           <motion.div
@@ -2164,13 +2185,53 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ================= TESTIMONIALS SECTION (NEW) ================= */}
+      <TestimonialsSection />
+
+      {/* ================= FAQ SECTION (NEW) ================= */}
+      <FAQSection />
+
       {/* ================= CLIENT LOGOS ================= */}
       <ClientLogosSection logos={clientLogos} />
 
+      {/* ================= TEAM SECTION ================= */}
+      <section id="team" className="py-20 sm:py-32 bg-slate-900/30">
+        <div className="container mx-auto px-4 sm:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
+              className="text-center max-w-3xl mx-auto mb-16"
+            >
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
+                Meet Our Leadership
+                </h2>
+                <p className="text-lg text-slate-400">
+                The creative minds and technical experts behind Swakarsa Digital.
+                </p>
+            </motion.div>
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-8">
+            {teamMembers.map((member, index) => (
+                <TeamMember 
+                key={`${member.name}-${index}`} 
+                member={member} 
+                index={index} 
+                />
+            ))}
+            </div>
+            <div className="text-center mt-12">
+                <a href="/team" onClick={handleTeamClick}>
+                    <Button variant="outline" size="lg">
+                        View All Teams & CVs
+                    </Button>
+                </a>
+            </div>
+        </div>
+      </section>
+
       {/* ================= CTA & FOOTER ================= */}
       <footer className="relative pt-24 pb-12 overflow-hidden bg-slate-900 border-t border-slate-800">
-        
-        {/* CTA Content */}
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center max-w-4xl mx-auto mb-20" id="contact">
                 <h2 className="text-4xl sm:text-5xl font-extrabold mb-6 tracking-tight text-white">
@@ -2192,7 +2253,6 @@ export default function LandingPage() {
                         </a>
                     </Button>
                 </div>
-
                  {/* Social Media */}
                 <div className="mt-12">
                     <p className="text-sm font-semibold uppercase tracking-widest mb-6 text-slate-500">
@@ -2209,9 +2269,7 @@ export default function LandingPage() {
                     </div>
                 </div>
             </div>
-
             <div className="h-px w-full my-12 bg-slate-800"></div>
-
             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <a href="/" className="flex items-center gap-3">
                     <img 
@@ -2227,11 +2285,9 @@ export default function LandingPage() {
                         Swakarsa Digital
                     </span>
                 </a>
-                
                 <p className="text-sm text-slate-500">
                     © {new Date().getFullYear()} Swakarsa Digital. All Rights Reserved.
                 </p>
-
                 <div className="flex gap-6 text-sm font-medium">
                     <a href="#" className="hover:text-cyan-500 transition-colors text-slate-400">Privacy Policy</a>
                     <a href="#" className="hover:text-cyan-500 transition-colors text-slate-400">Terms of Service</a>
