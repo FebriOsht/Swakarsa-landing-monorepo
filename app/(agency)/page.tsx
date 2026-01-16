@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
-import FrogGatekeeper from "../components/agency/FrogGatekeeper";
 
 // ================= UTILITY COMPONENTS =================
 
@@ -205,152 +204,6 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
   );
 };
 
-// ================= CYBER WHALE COMPONENT (ULTIMATE MECHA VERSION) =================
-const CyberWhale = () => {
-  return (
-    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-      <motion.div
-        // START: Right side, deep water
-        initial={{ x: "120vw", y: "120%", rotate: 25, opacity: 0 }}
-        animate={{
-          x: ["120vw", "-50vw"],        // Move linearly from Far Right to Far Left
-          y: ["120%", "-25vh", "120%"], // Reduced jump height for smoothness (-25vh instead of -35vh)
-          rotate: [25, -5, -35],        // Smoother rotation arc
-          opacity: [0, 1, 1, 0]         // Fade In -> Stay -> Fade Out
-        }}
-        transition={{
-          // Global settings
-          duration: 15, // 15s for majestic movement
-          repeat: Infinity,
-          repeatDelay: 0, 
-          
-          // Specific overrides for smoother physics
-          x: { 
-            duration: 15, 
-            ease: "linear", // Constant horizontal speed
-            repeat: Infinity 
-          },
-          y: { 
-            duration: 15, 
-            ease: "easeInOut", // Smooth sine-wave like motion for "floating" effect
-            times: [0, 0.5, 1],
-            repeat: Infinity 
-          },
-          rotate: { 
-            duration: 15, 
-            ease: "easeInOut", // Match rotation smoothing with Y movement
-            repeat: Infinity 
-          },
-          opacity: { 
-            duration: 15, 
-            times: [0, 0.2, 0.8, 1], 
-            ease: "easeInOut",
-            repeat: Infinity 
-          }
-        }}
-        className="absolute bottom-0 w-[400px] sm:w-[600px] md:w-[900px] opacity-90 z-0"
-      >
-        {/* Facing LEFT SVG */}
-        <svg
-          viewBox="0 0 500 250"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-[0_0_30px_rgba(6,182,212,0.5)]"
-        >
-          <defs>
-            <linearGradient id="cyberGradient" x1="1" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0891b2" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="#0f172a" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#0891b2" stopOpacity="0.4" />
-            </linearGradient>
-            <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          {/* === MAIN BODY (Mecha Style) === */}
-          {/* Main Hull */}
-          <path
-            d="M 450 100 
-               Q 350 40, 200 60 
-               C 100 70, 40 120, 20 150 
-               L 40 160 
-               C 80 180, 150 200, 250 190 
-               Q 350 180, 450 140 
-               Z"
-            fill="url(#cyberGradient)"
-            stroke="#22d3ee"
-            strokeWidth="2"
-          />
-          
-          {/* Armor Plating Lines */}
-          <path d="M 120 80 L 160 110 L 280 100 L 320 70" stroke="#06b6d4" strokeWidth="1" fill="none" opacity="0.6" />
-          <path d="M 80 140 L 140 150 L 260 160 L 350 150" stroke="#06b6d4" strokeWidth="1" fill="none" opacity="0.6" />
-          <path d="M 200 60 L 200 190" stroke="#06b6d4" strokeWidth="1" strokeDasharray="5 5" opacity="0.3" />
-          
-          {/* === HEAD & EYE === */}
-          {/* Head Armor */}
-          <path d="M 20 150 L 60 130 L 100 130 L 80 160 Z" fill="#1e293b" stroke="#22d3ee" strokeWidth="1" />
-          
-          {/* Glowing Eye (Pulsing) */}
-          <circle cx="70" cy="145" r="5" fill="#ffffff" filter="url(#neonGlow)">
-             <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="70" cy="145" r="8" stroke="#ef4444" strokeWidth="2" opacity="0.7" />
-
-          {/* === FINS === */}
-          {/* Side Fin (Wing-like) */}
-          <path
-            d="M 220 130 L 180 180 L 250 170 Z"
-            fill="#0f172a"
-            stroke="#22d3ee"
-            strokeWidth="2"
-          />
-          <path d="M 220 130 L 210 160" stroke="#22d3ee" strokeWidth="1" />
-
-          {/* === TAIL (Propulsion System) === */}
-          {/* Tail Joint */}
-          <rect x="420" y="110" width="30" height="40" rx="5" fill="#1e293b" stroke="#22d3ee" transform="rotate(-10 435 130)" />
-          
-          {/* Tail Flukes */}
-          <path d="M 450 120 L 490 80 L 470 120 L 490 160 L 450 140" fill="#0f172a" stroke="#22d3ee" strokeWidth="2" />
-          
-          {/* Thruster Flame Effect */}
-          <motion.path
-            d="M 440 120 L 400 130 L 440 140"
-            fill="#22d3ee"
-            filter="url(#neonGlow)"
-            opacity="0.6"
-            animate={{ 
-              d: [
-                "M 470 120 L 520 130 L 470 140", 
-                "M 470 120 L 540 130 L 470 140",
-                "M 470 120 L 520 130 L 470 140"
-              ],
-              opacity: [0.5, 0.8, 0.5]
-            }}
-            transition={{ duration: 0.2, repeat: Infinity }}
-          />
-
-          {/* === PARTICLES / ENERGY TRAILS === */}
-          <motion.g
-             animate={{ x: [0, -50], opacity: [1, 0] }}
-             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          >
-             <circle cx="480" cy="100" r="2" fill="#22d3ee" />
-             <circle cx="490" cy="150" r="3" fill="#22d3ee" />
-          </motion.g>
-
-        </svg>
-      </motion.div>
-    </div>
-  );
-};
-
 // ================= CYBER FROG V3 COMPONENT =================
 // (Code remains same as corrected previous version)
 const CyberFrog = () => {
@@ -524,6 +377,158 @@ const CyberFrog = () => {
   );
 };
 
+// ================= FROG GATEKEEPER MODAL =================
+const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const [isFeeding, setIsFeeding] = useState(false);
+  const [showAccessGranted, setShowAccessGranted] = useState(false);
+  const [isMouthOpen, setIsMouthOpen] = useState(false);
+  const [isSwallowing, setIsSwallowing] = useState(false);
+
+  // --- MOTION VALUES FOR BUG POSITION (To Sync Eyes) ---
+  const bugX = useMotionValue(50);
+  const bugY = useMotionValue(50);
+  const [tonguePath, setTonguePath] = useState("M50 75 Q50 75 50 75");
+
+  const eyeX = useTransform(bugX, [0, 100], [-6, 6]);
+  const eyeY = useTransform(bugY, [0, 100], [-6, 6]);
+
+  // Update tongue path when bug position changes
+  useEffect(() => {
+    const unsubscribeX = bugX.onChange((bx: number) => {
+      const by = bugY.get();
+      const mx = 50;
+      const my = 75;
+      const cx = mx + (bx - mx) / 2;
+      const cy = my + (by - my) / 2 - 10;
+      setTonguePath(`M${mx} ${my} Q ${cx} ${cy} ${bx} ${by}`);
+    });
+
+    const unsubscribeY = bugY.onChange((by: number) => {
+      const bx = bugX.get();
+      const mx = 50;
+      const my = 75;
+      const cx = mx + (bx - mx) / 2;
+      const cy = my + (by - my) / 2 - 10;
+      setTonguePath(`M${mx} ${my} Q ${cx} ${cy} ${bx} ${by}`);
+    });
+
+    return () => {
+      unsubscribeX();
+      unsubscribeY();
+    };
+  }, [bugX, bugY]);
+
+  useEffect(() => {
+    if (!isOpen || isFeeding) return;
+    let controlsX: any, controlsY: any;
+    const fly = () => {
+      const nextX = Math.random() * 80 + 10;
+      const nextY = Math.random() * 70 + 15;
+      const duration = Math.random() * 1 + 1.5;
+      controlsX = animate(bugX, nextX, { duration, ease: "easeInOut" });
+      controlsY = animate(bugY, nextY, { duration, ease: "easeInOut", onComplete: fly });
+    };
+    fly();
+    return () => { if(controlsX) controlsX.stop(); if(controlsY) controlsY.stop(); };
+  }, [isOpen, isFeeding, bugX, bugY]);
+
+  const handleBugClick = () => {
+    if (isFeeding) return;
+    setIsFeeding(true);
+    setIsMouthOpen(true);
+    animate(bugX, 50, { duration: 0.4, ease: "backIn" });
+    animate(bugY, 75, { duration: 0.4, ease: "backIn", onComplete: () => {
+        setIsSwallowing(true);
+        setTimeout(() => {
+          setIsSwallowing(false);
+          setIsMouthOpen(false);
+          setShowAccessGranted(true);
+          setTimeout(() => {
+            window.location.href = "/team"; 
+            onClose();
+          }, 300); 
+        }, 1000); 
+    }});
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md" onClick={onClose}>
+        <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} className="relative w-full max-w-2xl h-[600px] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+          <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="absolute top-8 left-1/2 -translate-x-1/2 text-center z-10">
+            <p className="text-white text-lg font-semibold mb-2">Feed the Cyber Frog to access the team!</p>
+            <p className="text-cyan-400 text-sm">Click the glowing Data Bug 🐛</p>
+          </motion.div>
+          <div className="relative">
+            <motion.svg width="300" height="360" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-20">
+              <path d="M15 95C8 95 3 105 8 110" stroke="#166534" strokeWidth="6" strokeLinecap="round" fill="#166534" />
+              <path d="M85 95C92 95 97 105 92 110" stroke="#166534" strokeWidth="6" strokeLinecap="round" fill="#166534" />
+              <ellipse cx="12" cy="108" rx="5" ry="3" fill="#166534" />
+              <ellipse cx="88" cy="108" rx="5" ry="3" fill="#166534" />
+              <ellipse cx="25" cy="80" rx="8" ry="12" fill="#22c55e" />
+              <ellipse cx="75" cy="80" rx="8" ry="12" fill="#22c55e" />
+              <ellipse cx="25" cy="88" rx="6" ry="4" fill="#86efac" />
+              <ellipse cx="75" cy="88" rx="6" ry="4" fill="#86efac" />
+              <ellipse cx="50" cy="70" rx="38" ry="30" fill="#22c55e" />
+              <motion.ellipse cx="50" cy="75" rx="28" ry="22" fill="#86efac" animate={isSwallowing ? { ry: [22, 24, 22], rx: [28, 29, 28] } : { ry: 22, rx: 28 }} transition={{ duration: 0.3, repeat: Infinity, ease: "easeInOut" }} />
+              <ellipse cx="45" cy="68" rx="12" ry="8" fill="#4ade80" opacity="0.3" />
+              <ellipse cx="55" cy="68" rx="12" ry="8" fill="#4ade80" opacity="0.3" />
+              <circle cx="32" cy="50" r="16" fill="#16a34a" />
+              <circle cx="68" cy="50" r="16" fill="#16a34a" />
+              <ellipse cx="50" cy="55" rx="20" ry="18" fill="#16a34a" />
+              <g>
+                  <circle cx="32" cy="50" r="11" fill="white" />
+                  <circle cx="68" cy="50" r="11" fill="white" />
+                  <motion.g style={{ x: eyeX, y: eyeY }}>
+                      <circle cx="32" cy="50" r="5" fill="#0f172a" />
+                      <circle cx="68" cy="50" r="5" fill="#0f172a" />
+                      <circle cx="34" cy="48" r="2" fill="white" opacity="0.8" />
+                      <circle cx="70" cy="48" r="2" fill="white" opacity="0.8" />
+                  </motion.g>
+              </g>
+              <rect x="18" y="42" width="64" height="16" rx="6" fill="rgba(15, 23, 42, 0.8)" stroke="#0891b2" strokeWidth="2" />
+              <ellipse cx="32" cy="50" rx="12" ry="10" fill="rgba(6, 182, 212, 0.3)" />
+              <ellipse cx="68" cy="50" rx="12" ry="10" fill="rgba(6, 182, 212, 0.3)" />
+              <ellipse cx="32" cy="50" rx="8" ry="6" fill="rgba(6, 182, 212, 0.6)" />
+              <ellipse cx="68" cy="50" rx="8" ry="6" fill="rgba(6, 182, 212, 0.6)" />
+              <path d="M18 50H10" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
+              <path d="M82 50H90" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
+              <motion.path d="M38 75 Q50 80 62 75" stroke="#14532d" strokeLinecap="round" fill="none" animate={isMouthOpen ? { d: "M38 75 Q50 85 62 75", strokeWidth: 4 } : isSwallowing ? { d: ["M38 75 Q50 80 62 75", "M38 75 Q50 83 62 75", "M38 75 Q50 80 62 75"], strokeWidth: 3, transition: { duration: 0.3, repeat: Infinity, ease: "easeInOut" } } : { d: "M38 75 Q50 80 62 75", strokeWidth: 3 }} />
+              {isFeeding && !showAccessGranted && (
+                 <motion.path d={tonguePath} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.1 }} />
+              )}
+              <circle cx="26" cy="68" r="5" fill="#f472b6" opacity="0.5" />
+              <circle cx="74" cy="68" r="5" fill="#f472b6" opacity="0.5" />
+              {!showAccessGranted && (
+                 <motion.g onClick={handleBugClick} style={{ x: bugX, y: bugY, cursor: 'pointer' }} animate={{ opacity: isSwallowing ? 0 : 1, scale: isSwallowing ? 0 : 1 }}>
+                    <circle cx="0" cy="0" r="3" fill="#1e293b" />
+                    <ellipse cx="-3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
+                    <ellipse cx="3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
+                    <rect x="-4" y="-4" width="8" height="8" stroke="#ef4444" strokeWidth="0.5" fill="none" strokeDasharray="1 1" opacity="0.5">
+                          <animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" />
+                    </rect>
+                 </motion.g>
+              )}
+            </motion.svg>
+            {showAccessGranted && (
+              <motion.div initial={{ opacity: 0, scale: 0, y: 20 }} animate={{ opacity: 1, scale: 1, y: -80 }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40">
+                <div className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-8 py-4 rounded-2xl font-bold text-2xl shadow-[0_0_30px_rgba(6,182,212,0.8)] border-2 border-white">
+                  ACCESS GRANTED! 🎉
+                </div>
+              </motion.div>
+            )}
+          </div>
+          <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-50">
+            <X size={24} />
+          </button>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
 // ================= WORKFLOW SECTION (NEW) =================
 const WorkflowSection = () => {
     const steps = [
@@ -551,7 +556,7 @@ const WorkflowSection = () => {
 
     return (
         <section id="process" className="py-20 sm:py-32 bg-slate-950 relative overflow-hidden">
-              {/* Background Elements */}
+             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-900/20 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-900/20 rounded-full blur-3xl"></div>
@@ -1887,7 +1892,7 @@ export default function LandingPage() {
     setSelectedSkill(null);
     setSelectedProject(null);
   };
-    
+   
   const socialMediaLinks = [
     { icon: 'Instagram', href: "https://www.instagram.com/swakarsa_digital", label: "Instagram", src: "/sosmed/instagram.jpeg" },
     { icon: 'Facebook', href: "https://www.facebook.com/share/1B4CzChc4e", label: "Facebook", src: "/sosmed/facebook.png" },
@@ -1907,7 +1912,6 @@ export default function LandingPage() {
       {/* ================= NEW HERO SECTION ================= */}
       <section id="home" className="relative min-h-screen flex items-center justify-center pt-32 pb-32 overflow-hidden z-10 bg-slate-950">
         <OceanWaves />
-        <CyberWhale />
         <CyberFrog />
         <div className="container relative z-10 px-4 sm:px-6 text-center">
           <motion.div
