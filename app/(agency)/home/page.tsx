@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
-import FrogGatekeeper from "../components/agency/FrogGatekeeper";
+import FrogGatekeeper from "@/app/components/agency/FrogGatekeeper";
 
 // ================= UTILITY COMPONENTS =================
 
@@ -214,36 +214,36 @@ const CyberWhale = () => {
         initial={{ x: "120vw", y: "120%", rotate: 25, opacity: 0 }}
         animate={{
           x: ["120vw", "-50vw"],        // Move linearly from Far Right to Far Left
-          y: ["120%", "-25vh", "120%"], // Reduced jump height for smoothness (-25vh instead of -35vh)
-          rotate: [25, -5, -35],        // Smoother rotation arc
+          y: ["120%", "-35vh", "120%"], // Jump: Deep -> High Air -> Deep
+          rotate: [25, -10, -35],       // Nose Up -> Slight level -> Nose Down
           opacity: [0, 1, 1, 0]         // Fade In -> Stay -> Fade Out
         }}
         transition={{
           // Global settings
-          duration: 15, // 15s for majestic movement
+          duration: 15, // Increased to 15s for very smooth, majestic movement
           repeat: Infinity,
-          repeatDelay: 0, 
+          repeatDelay: 0, // No delay, continuous cycle
           
           // Specific overrides for smoother physics
           x: { 
             duration: 15, 
-            ease: "linear", // Constant horizontal speed
+            ease: "linear", // Constant horizontal speed is crucial for smoothness
             repeat: Infinity 
           },
           y: { 
             duration: 15, 
-            ease: "easeInOut", // Smooth sine-wave like motion for "floating" effect
+            ease: ["easeOut", "easeIn"], // Natural gravity: Decelerate up, Accelerate down
             times: [0, 0.5, 1],
             repeat: Infinity 
           },
           rotate: { 
             duration: 15, 
-            ease: "easeInOut", // Match rotation smoothing with Y movement
+            ease: "easeInOut", // Smoothly transition rotation
             repeat: Infinity 
           },
           opacity: { 
             duration: 15, 
-            times: [0, 0.2, 0.8, 1], 
+            times: [0, 0.2, 0.8, 1], // Smooth fade in/out at edges
             ease: "easeInOut",
             repeat: Infinity 
           }
