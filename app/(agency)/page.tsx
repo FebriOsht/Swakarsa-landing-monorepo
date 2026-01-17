@@ -10,6 +10,142 @@ import {
 import { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
 
+// ================= CYBER WHALE COMPONENT =================
+const CyberWhale = () => {
+  return (
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+      <motion.div
+        initial={{ x: "120vw", y: "120%", rotate: 25, opacity: 0 }}
+        animate={{
+          x: ["120vw", "-50vw"],
+          y: ["120%", "-35vh", "120%"],
+          rotate: [25, -10, -35],
+          opacity: [0, 1, 1, 0]
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          repeatDelay: 0,
+          x: { 
+            duration: 15, 
+            ease: "linear",
+            repeat: Infinity 
+          },
+          y: { 
+            duration: 15, 
+            ease: ["easeOut", "easeIn"],
+            times: [0, 0.5, 1],
+            repeat: Infinity 
+          },
+          rotate: { 
+            duration: 15, 
+            ease: "easeInOut",
+            repeat: Infinity 
+          },
+          opacity: { 
+            duration: 15, 
+            times: [0, 0.2, 0.8, 1],
+            ease: "easeInOut",
+            repeat: Infinity 
+          }
+        }}
+        className="absolute bottom-0 w-[400px] sm:w-[600px] md:w-[900px] opacity-90 z-0"
+      >
+        <svg
+          viewBox="0 0 500 250"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-full drop-shadow-[0_0_30px_rgba(6,182,212,0.5)]"
+        >
+          <defs>
+            <linearGradient id="cyberGradient" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#0891b2" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="#0f172a" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#0891b2" stopOpacity="0.4" />
+            </linearGradient>
+            <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Main Whale Body */}
+          <path
+            d="M 450 100 
+               Q 350 40, 200 60 
+               C 100 70, 40 120, 20 150 
+               L 40 160 
+               C 80 180, 150 200, 250 190 
+               Q 350 180, 450 140 
+               Z"
+            fill="url(#cyberGradient)"
+            stroke="#22d3ee"
+            strokeWidth="2"
+          />
+          
+          {/* Armor Plating Lines */}
+          <path d="M 120 80 L 160 110 L 280 100 L 320 70" stroke="#06b6d4" strokeWidth="1" fill="none" opacity="0.6" />
+          <path d="M 80 140 L 140 150 L 260 160 L 350 150" stroke="#06b6d4" strokeWidth="1" fill="none" opacity="0.6" />
+          <path d="M 200 60 L 200 190" stroke="#06b6d4" strokeWidth="1" strokeDasharray="5 5" opacity="0.3" />
+          
+          {/* Head Armor */}
+          <path d="M 20 150 L 60 130 L 100 130 L 80 160 Z" fill="#1e293b" stroke="#22d3ee" strokeWidth="1" />
+          
+          {/* Glowing Eye */}
+          <circle cx="70" cy="145" r="5" fill="#ffffff" filter="url(#neonGlow)">
+             <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="70" cy="145" r="8" stroke="#ef4444" strokeWidth="2" opacity="0.7" />
+
+          {/* Side Fin */}
+          <path
+            d="M 220 130 L 180 180 L 250 170 Z"
+            fill="#0f172a"
+            stroke="#22d3ee"
+            strokeWidth="2"
+          />
+          <path d="M 220 130 L 210 160" stroke="#22d3ee" strokeWidth="1" />
+
+          {/* Tail */}
+          <rect x="420" y="110" width="30" height="40" rx="5" fill="#1e293b" stroke="#22d3ee" transform="rotate(-10 435 130)" />
+          
+          {/* Tail Flukes */}
+          <path d="M 450 120 L 490 80 L 470 120 L 490 160 L 450 140" fill="#0f172a" stroke="#22d3ee" strokeWidth="2" />
+          
+          {/* Thruster Flame */}
+          <motion.path
+            d="M 440 120 L 400 130 L 440 140"
+            fill="#22d3ee"
+            filter="url(#neonGlow)"
+            opacity="0.6"
+            animate={{ 
+              d: [
+                "M 470 120 L 520 130 L 470 140", 
+                "M 470 120 L 540 130 L 470 140",
+                "M 470 120 L 520 130 L 470 140"
+              ],
+              opacity: [0.5, 0.8, 0.5]
+            }}
+            transition={{ duration: 0.2, repeat: Infinity }}
+          />
+
+          {/* Particles */}
+          <motion.g
+             animate={{ x: [0, -50], opacity: [1, 0] }}
+             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          >
+             <circle cx="480" cy="100" r="2" fill="#22d3ee" />
+             <circle cx="490" cy="150" r="3" fill="#22d3ee" />
+          </motion.g>
+        </svg>
+      </motion.div>
+    </div>
+  );
+};
+  
 // ================= UTILITY COMPONENTS =================
 
 // Optimize CountUp with useCallback and more efficient requestAnimationFrame
@@ -100,10 +236,10 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
 
   const navLinks = [
     { name: "Home", href: "#home" },
-    { name: "Services", href: "#services" },
     { name: "Process", href: "#process" },
-    { name: "Portfolio", href: "#portfolio" },
     { name: "Team", href: "#team" },
+    { name: "Services", href: "#services" },
+    { name: "Portfolio", href: "#portfolio" },
   ];
 
   return (
@@ -205,7 +341,6 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
 };
 
 // ================= CYBER FROG V3 COMPONENT =================
-// (Code remains same as corrected previous version)
 const CyberFrog = () => {
   const [isRibbiting, setIsRibbiting] = useState(false);
   const [isBlinking, setIsBlinking] = useState(false);
@@ -991,9 +1126,241 @@ const OceanWaves = () => {
   );
 };
 
-// ================= EXISTING COMPONENTS =================
+// ================= ENHANCED PORTFOLIO CARD WITH SCROLL ANIMATIONS =================
+const EnhancedPortfolioCard = ({ project, index, onClick }: any) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-// Optimized Team Member Component
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px'
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 60, scale: 0.9, rotateX: 10 }}
+      animate={isVisible ? { 
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+        rotateX: 0,
+        transition: {
+          type: "spring",
+          stiffness: 100,
+          damping: 15,
+          mass: 0.8,
+          delay: index * 0.15
+        }
+      } : {}}
+      whileHover={{ 
+        y: -12,
+        scale: 1.03,
+        rotateY: 2,
+        transition: { 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 15,
+          duration: 0.3 
+        }
+      }}
+      viewport={{ once: true, margin: "-50px" }}
+      className="relative rounded-2xl overflow-hidden cursor-pointer group bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 transition-all duration-300 backdrop-blur-sm"
+      onClick={() => onClick(project)}
+      style={{
+        transformStyle: "preserve-3d",
+        perspective: "1000px"
+      }}
+    >
+      {/* Glow effect on hover */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        initial={false}
+      />
+      
+      <div className="relative h-56 overflow-hidden">
+        {/* Image with parallax effect */}
+        <motion.div
+          className="w-full h-full"
+          whileHover={{ scale: 1.1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          <img 
+            src={project.image} 
+            alt={project.title}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover"
+          />
+        </motion.div>
+        
+        {/* Gradient overlay with animation */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"
+          initial={{ opacity: 0.8 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
+        
+        {/* Floating tag */}
+        <motion.div 
+          className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-white/10"
+          whileHover={{ 
+            scale: 1.1,
+            backgroundColor: "rgba(6, 182, 212, 0.8)",
+            transition: { type: "spring", stiffness: 400 }
+          }}
+        >
+          {project.category}
+        </motion.div>
+
+        {/* Title with slide-up animation */}
+        <motion.div 
+          className="absolute bottom-0 left-0 right-0 p-4 transform"
+          initial={{ y: 20, opacity: 0 }}
+          animate={isVisible ? { y: 0, opacity: 1 } : {}}
+          transition={{ delay: index * 0.15 + 0.2 }}
+        >
+          <h3 className="font-bold text-xl text-white mb-1 truncate">
+            {project.title}
+          </h3>
+          <motion.p 
+            className="text-sm text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100"
+            initial={{ x: -10, opacity: 0 }}
+            whileHover={{ x: 0, opacity: 1 }}
+          >
+            {project.client}
+          </motion.p>
+        </motion.div>
+      </div>
+
+      {/* Content with staggered children animation */}
+      <AnimatePresence>
+        <motion.div 
+          className="p-5"
+          initial={false}
+        >
+          <motion.p 
+            className="text-sm line-clamp-2 mb-4 text-slate-400"
+            initial={{ opacity: 0 }}
+            animate={isVisible ? { opacity: 1 } : {}}
+            transition={{ delay: index * 0.15 + 0.3 }}
+          >
+            {project.shortDescription}
+          </motion.p>
+          
+          {/* Tags with staggered animation */}
+          <motion.div 
+            className="flex flex-wrap gap-2 mb-4"
+            initial="hidden"
+            animate={isVisible ? "visible" : "hidden"}
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.05
+                }
+              },
+              hidden: {}
+            }}
+          >
+            {project.tags.slice(0, 3).map((tag: string, idx: number) => (
+              <motion.span 
+                key={idx} 
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8, y: 10 },
+                  visible: { 
+                    opacity: 1, 
+                    scale: 1, 
+                    y: 0,
+                    transition: {
+                      type: "spring",
+                      stiffness: 200,
+                      delay: index * 0.15 + 0.4 + idx * 0.05
+                    }
+                  }
+                }}
+                className="px-2 py-1 rounded text-xs font-medium bg-slate-800 text-slate-300 hover:bg-cyan-500/20 hover:text-cyan-300 transition-colors cursor-default"
+                whileHover={{ scale: 1.05 }}
+              >
+                {tag}
+              </motion.span>
+            ))}
+          </motion.div>
+          
+          {/* CTA Button with sliding animation */}
+          <motion.div 
+            className="flex items-center justify-between pt-3 border-t border-slate-800"
+            initial={{ opacity: 0 }}
+            animate={isVisible ? { opacity: 1 } : {}}
+            transition={{ delay: index * 0.15 + 0.5 }}
+          >
+            <span className="text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-white">
+              View Case Study 
+              <motion.span
+                animate={{ x: [0, 5, 0] }}
+                transition={{ 
+                  repeat: Infinity, 
+                  duration: 1.5,
+                  repeatType: "reverse",
+                  delay: index * 0.1
+                }}
+              >
+                <ArrowRight size={14} className="text-cyan-500" />
+              </motion.span>
+            </span>
+            
+            {/* Pulse indicator */}
+            <motion.div
+              className="w-2 h-2 rounded-full bg-cyan-500"
+              animate={{ 
+                scale: [1, 1.5, 1],
+                opacity: [0.7, 1, 0.7]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+      
+      {/* Border glow on hover */}
+      <motion.div 
+        className="absolute inset-0 rounded-2xl border border-transparent pointer-events-none"
+        initial={false}
+        whileHover={{
+          borderColor: "rgba(6, 182, 212, 0.3)",
+          boxShadow: "0 0 30px rgba(6, 182, 212, 0.2)"
+        }}
+        transition={{ duration: 0.3 }}
+      />
+    </motion.div>
+  );
+};
+
+// ================= OPTIMIZED TEAM MEMBER COMPONENT =================
 const TeamMember = ({ member, index }: any) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
@@ -1030,7 +1397,7 @@ const TeamMember = ({ member, index }: any) => (
   </motion.div>
 );
 
-// Optimized Stats Component with scroll animation
+// ================= OPTIMIZED STATS COMPONENT WITH SCROLL ANIMATION =================
 const StatsSection = ({ stats, hasAnimated }: any) => (
   <section id="stats-section" className="container mx-auto px-6 relative z-20 -mt-20 sm:-mt-24">
     <motion.div
@@ -1113,7 +1480,7 @@ const Modal = ({ isOpen, onClose, children, title }: any) => {
   );
 };
 
-// Skill Modal Content
+// ================= SKILL MODAL CONTENT =================
 const SkillModalContent = ({ skill }: any) => (
   <div className="space-y-8">
     <div className="flex flex-col md:flex-row items-start gap-8">
@@ -1197,7 +1564,7 @@ const SkillModalContent = ({ skill }: any) => (
   </div>
 );
 
-// Portfolio Modal Content
+// ================= PORTFOLIO MODAL CONTENT =================
 const PortfolioModalContent = ({ project }: any) => (
   <div className="space-y-8">
     <div className="relative rounded-2xl overflow-hidden h-64 md:h-80 w-full group">
@@ -1308,64 +1675,7 @@ const PortfolioModalContent = ({ project }: any) => (
   </div>
 );
 
-// Portfolio Card
-const PortfolioCard = ({ project, index, onClick }: any) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{ duration: 0.5, delay: index * 0.1 }}
-    whileHover={{ y: -8 }}
-    className="rounded-2xl overflow-hidden cursor-pointer group bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 transition-all duration-300"
-    onClick={() => onClick(project)}
-  >
-    <div className="relative h-56 overflow-hidden">
-      <img 
-        src={project.image} 
-        alt={project.title}
-        loading="lazy"
-        decoding="async"
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-      
-      <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold bg-black/60 backdrop-blur-md text-white border border-white/10">
-        {project.category}
-      </div>
-
-      <div className="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-          <h3 className="font-bold text-xl text-white mb-1 truncate">
-            {project.title}
-          </h3>
-          <p className="text-sm text-gray-300 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
-             {project.client}
-          </p>
-      </div>
-    </div>
-
-    <div className="p-5">
-      <p className="text-sm line-clamp-2 mb-4 text-slate-400">
-        {project.shortDescription}
-      </p>
-      
-      <div className="flex flex-wrap gap-2 mb-4">
-        {project.tags.slice(0, 3).map((tag: string, idx: number) => (
-          <span key={idx} className="px-2 py-1 rounded text-xs font-medium bg-slate-800 text-slate-300">
-            {tag}
-          </span>
-        ))}
-      </div>
-      
-      <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-        <span className="text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-white">
-          View Case Study <ArrowRight size={14} className="text-cyan-500" />
-        </span>
-      </div>
-    </div>
-  </motion.div>
-);
-
-// Client Logos Section
+// ================= CLIENT LOGOS SECTION =================
 const clientLogos = [
   { name: "CV. ALUMKA CIPTA PRIMA", src: "/trust/cv alumka cipta prima.jpeg" },
   { name: "CV. TAN JAYA STEEL", src: "/trust/cv tan jaya steel.jpeg" },
@@ -1398,17 +1708,20 @@ const ClientLogosSection = ({ logos }: any) => (
                       transition={{ duration: 0.4, delay: index * 0.1 }}
                       className="group relative"
                     >
-                      <img
-                        src={logo.src}
-                        alt={logo.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-12 sm:h-16 md:h-20 w-auto object-contain transition-all duration-300 opacity-70 hover:opacity-100 hover:scale-110"
-                        onError={(e: any) => { 
-                            e.target.onerror = null; 
-                            e.target.src="https://placehold.co/120x60/A0A0A0/FFFFFF?text=Client";
-                        }}
-                      />
+                      <div className="overflow-hidden rounded-full p-3 bg-white/5 border border-slate-200/10 shadow-sm group-hover:shadow-md transition-shadow duration-300">
+                        <img
+                          src={logo.src}
+                          alt={logo.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-12 sm:h-16 md:h-20 w-auto max-w-[80px] sm:max-w-[100px] md:max-w-[120px] object-cover rounded-full transition-all duration-300 opacity-70 hover:opacity-100 hover:scale-110"
+                          style={{ aspectRatio: "1/1" }} // ✅ Memastikan rasio 1:1
+                          onError={(e: any) => { 
+                              e.target.onerror = null; 
+                              e.target.src="https://placehold.co/120x120/A0A0A0/FFFFFF?text=Client";
+                          }}
+                        />
+                      </div>
                     </motion.div>
                 ))}
             </div>
@@ -1416,6 +1729,7 @@ const ClientLogosSection = ({ logos }: any) => (
     </section>
 );
 
+// ================= SOCIAL MEDIA LOGO =================
 const SocialMediaLogo = ({ social, size = 'w-8 h-8' }: any) => {
   return (
     <a
@@ -1440,6 +1754,7 @@ const SocialMediaLogo = ({ social, size = 'w-8 h-8' }: any) => {
   );
 };
 
+// ================= MAIN LANDING PAGE COMPONENT =================
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
@@ -1644,10 +1959,8 @@ export default function LandingPage() {
     }
   ];
 
-  // ... existing portfolioItems and effects ...
   // Portfolio data
   const portfolioItems = [
-    // ... existing items (kept same) ...
     {
       id: 1,
       title: "Maju Mobilindo",
@@ -1735,122 +2048,6 @@ export default function LandingPage() {
       techStack: ["Python", "FastAPI", "OpenAI", "React", "Redis"],
       tags: ["AI", "Chatbot", "NLP", "Automation"]
     },
-    {
-      id: 4,
-      title: "Hotel Dwipa Management System",
-      category: "Hotel Management System",
-      client: "Hotel Dwipa - Hospitality Business",
-      image: "/portfolio/Hotel Dwipa Management System.jpeg",
-      shortDescription: "Comprehensive hotel management system with booking, room management, and guest services.",
-      description: "Developing a complete hotel management system that handles reservations, check-in/check-out, room status management, billing, and guest services. The system integrates with payment gateways and provides real-time availability updates.",
-      duration: "12 Weeks",
-      challenges: [
-        "Managing multiple room types and pricing tiers",
-        "Real-time availability synchronization",
-        "Integration with payment gateways",
-        "Handling peak booking periods"
-      ],
-      solutions: [
-        "Dynamic pricing engine with seasonal adjustments",
-        "Real-time booking system with conflict prevention",
-        "Multiple payment gateway integration",
-        "Automated email notifications and confirmations"
-      ],
-      results: [
-        { value: "50%", label: "Booking Efficiency" },
-        { value: "30%", label: "Revenue Increase" },
-        { value: "4.8/5", label: "Guest Satisfaction" }
-      ],
-      techStack: ["Next.js", "Node.js", "PostgreSQL", "Stripe", "SendGrid"],
-      tags: ["Hospitality", "Booking", "Management", "Payment"]
-    },
-    {
-      id: 5,
-      title: "Restaurant POS System",
-      category: "Point of Sale System",
-      client: "Restaurant Chain - F&B Business",
-      image: "/portfolio/Restaurant POS System.jpeg",
-      shortDescription: "Modern restaurant POS system with table management, kitchen display, and order tracking.",
-      description: "Building a comprehensive restaurant POS system that handles table management, order taking, kitchen display system (KDS), payment processing, and sales reporting. The system supports multiple payment methods and integrates with delivery platforms.",
-      duration: "10 Weeks",
-      challenges: [
-        "Real-time order synchronization between front and kitchen",
-        "Table management for busy restaurants",
-        "Split billing and group orders",
-        "Integration with delivery platforms"
-      ],
-      solutions: [
-        "WebSocket-based real-time order updates",
-        "Visual table map with status indicators",
-        "Flexible billing system with item-level splitting",
-        "API integration with major delivery platforms"
-      ],
-      results: [
-        { value: "40%", label: "Faster Service" },
-        { value: "25%", label: "Order Accuracy" },
-        { value: "35%", label: "Revenue Growth" }
-      ],
-      techStack: ["React", "Node.js", "Socket.io", "PostgreSQL", "Stripe"],
-      tags: ["POS", "Restaurant", "F&B", "Real-time"]
-    },
-    {
-      id: 6,
-      title: "Transport Management System",
-      category: "Logistics System",
-      client: "Transportation Company - Logistics",
-      image: "/portfolio/Transport Management System.jpeg",
-      shortDescription: "Fleet management and logistics system with route optimization and real-time tracking.",
-      description: "Creating a comprehensive transport management system that handles fleet management, route optimization, driver assignment, real-time GPS tracking, and delivery status updates. The system helps reduce fuel costs and improve delivery efficiency.",
-      duration: "14 Weeks",
-      challenges: [
-        "Real-time GPS tracking for multiple vehicles",
-        "Route optimization for cost efficiency",
-        "Driver performance monitoring",
-        "Integration with customer notification systems"
-      ],
-      solutions: [
-        "GPS tracking with Google Maps integration",
-        "AI-powered route optimization algorithm",
-        "Driver dashboard with performance metrics",
-        "Automated SMS/email notifications for customers"
-      ],
-      results: [
-        { value: "30%", label: "Fuel Cost Reduction" },
-        { value: "45%", label: "On-time Delivery" },
-        { value: "50+", label: "Vehicles Managed" }
-      ],
-      techStack: ["Next.js", "Node.js", "PostgreSQL", "Google Maps API", "Twilio"],
-      tags: ["Logistics", "Fleet Management", "GPS", "Optimization"]
-    },
-    {
-      id: 7,
-      title: "Web Scraping Dashboard",
-      category: "Data Collection System",
-      client: "Market Research Company",
-      image: "/portfolio/Web Scraping Dashboard.jpeg",
-      shortDescription: "Automated web scraping platform with data visualization and scheduling capabilities.",
-      description: "Developing a web scraping dashboard that allows users to schedule scraping tasks, monitor data collection progress, visualize collected data, and export results. The system includes proxy rotation, rate limiting, and data cleaning features.",
-      duration: "8 Weeks",
-      challenges: [
-        "Handling anti-scraping measures",
-        "Managing large-scale data collection",
-        "Data cleaning and normalization",
-        "Scheduling and automation"
-      ],
-      solutions: [
-        "Proxy rotation and user-agent management",
-        "Distributed scraping architecture",
-        "Automated data validation and cleaning",
-        "Cron-based scheduling system"
-      ],
-      results: [
-        { value: "10K+", label: "Daily Data Points" },
-        { value: "95%", label: "Success Rate" },
-        { value: "80%", label: "Time Saved" }
-      ],
-      techStack: ["Python", "Scrapy", "React", "PostgreSQL", "Redis", "Celery"],
-      tags: ["Web Scraping", "Data", "Automation", "Analytics"]
-    }
   ];
 
   useEffect(() => {
@@ -1901,8 +2098,6 @@ export default function LandingPage() {
     { icon: 'GitHub', href: "https://github.com/rmyonathan", label: "GitHub", src: "/sosmed/github.png" },
   ];
 
-  const menuItems = ["Home", "Portfolio", "Services", "Team", "Contact"];
-
   return (
     <div className="min-h-screen bg-slate-900 text-white overflow-x-hidden">
       
@@ -1912,6 +2107,7 @@ export default function LandingPage() {
       {/* ================= NEW HERO SECTION ================= */}
       <section id="home" className="relative min-h-screen flex items-center justify-center pt-32 pb-32 overflow-hidden z-10 bg-slate-950">
         <OceanWaves />
+        <CyberWhale />
         <CyberFrog />
         <div className="container relative z-10 px-4 sm:px-6 text-center">
           <motion.div
@@ -1989,7 +2185,6 @@ export default function LandingPage() {
 
       {/* ================= ABOUT ================= */}
       <section id="about" className="container mx-auto px-4 sm:px-6 py-20 sm:py-32">
-         {/* ... (About content remains same) ... */}
           <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -2074,6 +2269,42 @@ export default function LandingPage() {
       {/* ================= WORKFLOW SECTION (NEW) ================= */}
       <WorkflowSection />
 
+            {/* ================= TEAM SECTION ================= */}
+      <section id="team" className="py-20 sm:py-32 bg-slate-900/30">
+        <div className="container mx-auto px-4 sm:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
+              className="text-center max-w-3xl mx-auto mb-16"
+            >
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
+                Meet Our Leadership
+                </h2>
+                <p className="text-lg text-slate-400">
+                The creative minds and technical experts behind Swakarsa Digital.
+                </p>
+            </motion.div>
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-8">
+            {teamMembers.map((member, index) => (
+                <TeamMember 
+                key={`${member.name}-${index}`} 
+                member={member} 
+                index={index} 
+                />
+            ))}
+            </div>
+            <div className="text-center mt-12">
+                <a href="/team" onClick={handleTeamClick}>
+                    <Button variant="outline" size="lg">
+                        View All Teams & CVs
+                    </Button>
+                </a>
+            </div>
+        </div>
+      </section>
+
       {/* ================= SKILLS ================= */}
       <section id="services" className="container mx-auto px-4 sm:px-6 py-20 sm:py-32">
         <motion.div
@@ -2122,68 +2353,198 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* ================= PORTFOLIO ================= */}
-      <section id="portfolio" className="py-20 sm:py-32 bg-slate-900">
-         <div className="container mx-auto px-4 sm:px-6">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5 }}
+      {/* ================= PORTFOLIO WITH ENHANCED ANIMATIONS ================= */}
+{/* ================= PORTFOLIO WITH ENHANCED ANIMATIONS ================= */}
+<section id="portfolio" className="py-20 sm:py-32 bg-slate-900">
+  <div className="container mx-auto px-4 sm:px-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <div className="max-w-2xl">
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: "100%" }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+            className="h-1 w-full bg-gradient-to-r from-cyan-500 to-blue-500 mb-6 rounded-full"
+          />
+          
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="block"
             >
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                    <div className="max-w-2xl">
-                        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-                        Featured Work
-                        </h2>
-                        <p className="text-lg text-slate-400">
-                        A selection of our recent projects that showcase our commitment to quality and innovation.
-                        </p>
-                    </div>
-                    <a href="/portfolio">
-                        <Button variant="outline" className="whitespace-nowrap">
-                            View All Projects
-                        </Button>
-                    </a>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-8">
-                {portfolioItems.map((project, index) => (
-                    <PortfolioCard 
-                    key={project.id}
-                    project={project}
-                    index={index}
-                    onClick={handleProjectClick}
-                    />
-                ))}
-                </div>
-
-                {/* Portfolio CTA */}
-                <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="mt-16 p-8 md:p-12 rounded-3xl text-center relative overflow-hidden group bg-cyan-900/20 border border-cyan-500/30"
-                >
-                    <div className="absolute inset-0 opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-                    <div className="relative z-10">
-                        <h3 className="font-bold text-2xl md:text-3xl mb-4 text-white">
-                        Have a project in mind?
-                        </h3>
-                        <p className="text-lg max-w-2xl mx-auto mb-8 text-slate-300">
-                        Let's discuss how we can help you achieve your goals. We're always excited to take on new challenges.
-                        </p>
-                        <a href="#contact">
-                            <Button size="lg" className="shadow-xl">
-                                Start a Conversation
-                            </Button>
-                        </a>
-                    </div>
-                </motion.div>
-            </motion.div>
+              Featured Work
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-cyan-400 block text-lg font-normal mt-2"
+            >
+              Scroll to explore our latest projects
+            </motion.span>
+          </h2>
+          
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-lg text-slate-400"
+          >
+            A selection of our recent projects that showcase our commitment to quality and innovation.
+          </motion.p>
         </div>
-      </section>
+        
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <a href="/portfolio">
+            <Button variant="outline" className="whitespace-nowrap group">
+              <span className="flex items-center gap-2">
+                View All Projects
+                <motion.span
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ 
+                    duration: 1.5, 
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                >
+                  <ChevronRight size={16} />
+                </motion.span>
+              </span>
+            </Button>
+          </a>
+        </motion.div>
+      </div>
+
+      {/* Grid yang sudah dioptimalkan - 2 kolom untuk desktop */}
+      <motion.div 
+        className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+        variants={{
+          visible: {
+            transition: {
+              staggerChildren: 0.1,
+              delayChildren: 0.1
+            }
+          },
+          hidden: {}
+        }}
+      >
+        {portfolioItems.map((project, index) => (
+          <motion.div
+            key={project.id}
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { 
+                opacity: 1, 
+                y: 0,
+                transition: {
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 15
+                }
+              }
+            }}
+          >
+            <EnhancedPortfolioCard 
+              project={project}
+              index={index}
+              onClick={handleProjectClick}
+            />
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Portfolio CTA dengan entrance animation */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ 
+          duration: 0.6, 
+          delay: 0.3,
+          type: "spring",
+          stiffness: 100
+        }}
+        className="mt-16 p-8 md:p-12 rounded-3xl text-center relative overflow-hidden group bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700"
+      >
+        {/* Animated background */}
+        <motion.div 
+          className="absolute inset-0 opacity-10"
+          animate={{
+            background: [
+              'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 70% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)'
+            ]
+          }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        
+        <div className="relative z-10">
+          <motion.h3 
+            className="font-bold text-2xl md:text-3xl mb-4 text-white"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            Have a project in mind?
+          </motion.h3>
+          
+          <motion.p 
+            className="text-lg max-w-2xl mx-auto mb-8 text-slate-300"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            Let's discuss how we can help you achieve your goals. We're always excited to take on new challenges.
+          </motion.p>
+          
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <a href="#contact">
+              <Button size="lg" className="shadow-xl relative overflow-hidden">
+                <motion.span
+                  className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20"
+                  animate={{
+                    x: ['-100%', '100%']
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                />
+                <span className="relative z-10">Start a Conversation</span>
+              </Button>
+            </a>
+          </motion.div>
+        </div>
+      </motion.div>
+    </motion.div>
+  </div>
+</section>
 
       {/* ================= TESTIMONIALS SECTION (NEW) ================= */}
       <TestimonialsSection />
@@ -2193,42 +2554,6 @@ export default function LandingPage() {
 
       {/* ================= CLIENT LOGOS ================= */}
       <ClientLogosSection logos={clientLogos} />
-
-      {/* ================= TEAM SECTION ================= */}
-      <section id="team" className="py-20 sm:py-32 bg-slate-900/30">
-        <div className="container mx-auto px-4 sm:px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5 }}
-              className="text-center max-w-3xl mx-auto mb-16"
-            >
-                <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-                Meet Our Leadership
-                </h2>
-                <p className="text-lg text-slate-400">
-                The creative minds and technical experts behind Swakarsa Digital.
-                </p>
-            </motion.div>
-            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-8">
-            {teamMembers.map((member, index) => (
-                <TeamMember 
-                key={`${member.name}-${index}`} 
-                member={member} 
-                index={index} 
-                />
-            ))}
-            </div>
-            <div className="text-center mt-12">
-                <a href="/team" onClick={handleTeamClick}>
-                    <Button variant="outline" size="lg">
-                        View All Teams & CVs
-                    </Button>
-                </a>
-            </div>
-        </div>
-      </section>
 
       {/* ================= CTA & FOOTER ================= */}
       <footer className="relative pt-24 pb-12 overflow-hidden bg-slate-900 border-t border-slate-800">
