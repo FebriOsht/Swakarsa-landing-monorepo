@@ -10,138 +10,280 @@ import {
 import { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
 
-// ================= CYBER WHALE COMPONENT =================
+// ================= CYBER MECHA WHALE COMPONENT (JUMPING ANIMATION) =================
 const CyberWhale = () => {
+  const [isJumping, setIsJumping] = useState(false);
+
+  // Start jumping animation every 20 seconds
+  useEffect(() => {
+    const startJumping = () => {
+      setIsJumping(true);
+      // Reset after animation completes (4 seconds for jump + hang time)
+      setTimeout(() => setIsJumping(false), 4000);
+    };
+
+    // Initial jump after 3 seconds
+    const initialTimer = setTimeout(startJumping, 3000);
+    
+    // Set interval for subsequent jumps
+    const intervalTimer = setInterval(startJumping, 20000);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(intervalTimer);
+    };
+  }, []);
+
   return (
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+      {/* Water surface line */}
+      <div className="absolute top-1/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent z-10"></div>
+
+      {/* Jumping Whale Animation */}
       <motion.div
-        initial={{ x: "120vw", y: "120%", rotate: 25, opacity: 0 }}
-        animate={{
-          x: ["120vw", "-50vw"],
-          y: ["120%", "-35vh", "120%"],
-          rotate: [25, -10, -35],
+        initial={{ 
+          x: "120vw", 
+          y: "100vh",
+          rotate: 0,
+          opacity: 0 
+        }}
+        animate={isJumping ? {
+          x: ["120vw", "40vw", "-20vw", "-50vw"],
+          y: ["100vh", "40vh", "20vh", "100vh"],
+          rotate: [0, -15, 0, 15],
           opacity: [0, 1, 1, 0]
+        } : {
+          x: "120vw",
+          y: "100vh",
+          opacity: 0
         }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          repeatDelay: 0,
-          x: { 
-            duration: 15, 
-            ease: "linear",
-            repeat: Infinity 
-          },
-          y: { 
-            duration: 15, 
-            ease: ["easeOut", "easeIn"],
-            times: [0, 0.5, 1],
-            repeat: Infinity 
-          },
-          rotate: { 
-            duration: 15, 
-            ease: "easeInOut",
-            repeat: Infinity 
-          },
-          opacity: { 
-            duration: 15, 
-            times: [0, 0.2, 0.8, 1],
-            ease: "easeInOut",
-            repeat: Infinity 
-          }
+        transition={isJumping ? {
+          duration: 4,
+          times: [0, 0.3, 0.7, 1],
+          ease: ["easeOut", "easeInOut", "easeIn"]
+        } : {
+          duration: 0
         }}
-        className="absolute bottom-0 w-[400px] sm:w-[600px] md:w-[900px] opacity-90 z-0"
+        className="absolute w-[500px] sm:w-[700px] md:w-[900px] opacity-90 z-20"
       >
         <svg
-          viewBox="0 0 500 250"
+          viewBox="0 0 800 500"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full drop-shadow-[0_0_30px_rgba(6,182,212,0.5)]"
         >
           <defs>
-            <linearGradient id="cyberGradient" x1="1" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0891b2" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="#0f172a" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#0891b2" stopOpacity="0.4" />
-            </linearGradient>
-            <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
               <feMerge>
                 <feMergeNode in="coloredBlur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
+            
+            <linearGradient id="metalGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#1e293b" />
+              <stop offset="40%" stopColor="#334155" />
+              <stop offset="50%" stopColor="#94a3b8" />
+              <stop offset="60%" stopColor="#1e293b" />
+              <stop offset="100%" stopColor="#0f172a" />
+            </linearGradient>
+
+            <linearGradient id="darkMetal" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#0f172a" />
+              <stop offset="100%" stopColor="#1e293b" />
+            </linearGradient>
+
+            <radialGradient id="energyGradient" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0%" stopColor="#cffafe" />
+              <stop offset="40%" stopColor="#22d3ee" />
+              <stop offset="100%" stopColor="rgba(34, 211, 238, 0)" />
+            </radialGradient>
           </defs>
 
           {/* Main Whale Body */}
           <path
-            d="M 450 100 
-               Q 350 40, 200 60 
-               C 100 70, 40 120, 20 150 
-               L 40 160 
-               C 80 180, 150 200, 250 190 
-               Q 350 180, 450 140 
-               Z"
-            fill="url(#cyberGradient)"
-            stroke="#22d3ee"
-            strokeWidth="2"
-          />
-          
-          {/* Armor Plating Lines */}
-          <path d="M 120 80 L 160 110 L 280 100 L 320 70" stroke="#06b6d4" strokeWidth="1" fill="none" opacity="0.6" />
-          <path d="M 80 140 L 140 150 L 260 160 L 350 150" stroke="#06b6d4" strokeWidth="1" fill="none" opacity="0.6" />
-          <path d="M 200 60 L 200 190" stroke="#06b6d4" strokeWidth="1" strokeDasharray="5 5" opacity="0.3" />
-          
-          {/* Head Armor */}
-          <path d="M 20 150 L 60 130 L 100 130 L 80 160 Z" fill="#1e293b" stroke="#22d3ee" strokeWidth="1" />
-          
-          {/* Glowing Eye */}
-          <circle cx="70" cy="145" r="5" fill="#ffffff" filter="url(#neonGlow)">
-             <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="70" cy="145" r="8" stroke="#ef4444" strokeWidth="2" opacity="0.7" />
-
-          {/* Side Fin */}
-          <path
-            d="M 220 130 L 180 180 L 250 170 Z"
+            d="M 100 250 Q 300 150 580 220 L 580 280 Q 300 350 100 250"
             fill="#0f172a"
-            stroke="#22d3ee"
-            strokeWidth="2"
+            stroke="none"
           />
-          <path d="M 220 130 L 210 160" stroke="#22d3ee" strokeWidth="1" />
+
+          {/* Armor Plate: Head */}
+          <path
+            d="M 80 260 L 150 210 L 250 200 L 220 300 L 120 290 Z"
+            fill="url(#metalGradient)"
+            stroke="#22d3ee"
+            strokeWidth="1.5"
+            filter="url(#glow)"
+          />
+          
+          {/* Eye */}
+          <circle cx="160" cy="260" r="6" fill="#000" stroke="#22d3ee" strokeWidth="2" />
+          <motion.circle 
+            cx="160" cy="260" r="3" fill="#ef4444" 
+            animate={{ opacity: [1, 0.3, 1] }} 
+            transition={{ duration: 2, repeat: Infinity }}
+            filter="url(#glow)"
+          />
+
+          {/* Armor Plate: Mid Body Top */}
+          <path
+            d="M 260 200 L 450 190 L 580 220 L 500 250 L 260 220 Z"
+            fill="url(#metalGradient)"
+            stroke="#22d3ee"
+            strokeWidth="1"
+            className="drop-shadow-lg"
+          />
+
+          {/* Armor Plate: Mid Body Bottom */}
+          <path
+            d="M 230 300 L 500 250 L 580 280 L 400 310 Z"
+            fill="url(#darkMetal)"
+            stroke="#22d3ee"
+            strokeWidth="1"
+          />
+
+          {/* Energy Core (The Reactor) */}
+          <circle cx="400" cy="250" r="25" fill="#0f172a" stroke="#22d3ee" strokeWidth="2" />
+          <motion.circle 
+            cx="400" cy="250" r="15" 
+            fill="url(#energyGradient)"
+            animate={{ r: [15, 18, 15], opacity: [0.8, 1, 0.8] }}
+            transition={{ duration: 3, repeat: Infinity }}
+            filter="url(#glow)"
+          />
+          
+          {/* Core Spinner */}
+          <motion.g
+            style={{ originX: "400px", originY: "250px" }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          >
+            <rect x="398" y="225" width="4" height="50" fill="#22d3ee" />
+            <rect x="375" y="248" width="50" height="4" fill="#22d3ee" />
+          </motion.g>
 
           {/* Tail */}
-          <rect x="420" y="110" width="30" height="40" rx="5" fill="#1e293b" stroke="#22d3ee" transform="rotate(-10 435 130)" />
-          
-          {/* Tail Flukes */}
-          <path d="M 450 120 L 490 80 L 470 120 L 490 160 L 450 140" fill="#0f172a" stroke="#22d3ee" strokeWidth="2" />
-          
-          {/* Thruster Flame */}
-          <motion.path
-            d="M 440 120 L 400 130 L 440 140"
-            fill="#22d3ee"
-            filter="url(#neonGlow)"
-            opacity="0.6"
-            animate={{ 
-              d: [
-                "M 470 120 L 520 130 L 470 140", 
-                "M 470 120 L 540 130 L 470 140",
-                "M 470 120 L 520 130 L 470 140"
-              ],
-              opacity: [0.5, 0.8, 0.5]
-            }}
-            transition={{ duration: 0.2, repeat: Infinity }}
-          />
-
-          {/* Particles */}
           <motion.g
-             animate={{ x: [0, -50], opacity: [1, 0] }}
-             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            animate={{ 
+              rotateZ: [-5, 10, -5],
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            originX="580" originY="250"
           >
-             <circle cx="480" cy="100" r="2" fill="#22d3ee" />
-             <circle cx="490" cy="150" r="3" fill="#22d3ee" />
+            <path
+              d="M 580 220 L 680 230 L 680 270 L 580 280 Z"
+              fill="url(#metalGradient)"
+              stroke="#22d3ee"
+              strokeWidth="1"
+            />
+            
+            {/* Tail Fluke */}
+            <motion.g
+              animate={{ rotateZ: [-10, 15, -10] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+              originX="680" originY="250"
+            >
+              <path
+                d="M 680 240 L 760 180 L 740 250 L 760 320 L 680 260 Z"
+                fill="url(#darkMetal)"
+                stroke="#22d3ee"
+                strokeWidth="2"
+                filter="url(#glow)"
+              />
+              
+              {/* Thruster Flame */}
+              <motion.path
+                d="M 720 250 L 820 250 L 720 270"
+                fill="url(#energyGradient)"
+                opacity="0.8"
+                filter="url(#glow)"
+                animate={{ d: [
+                  "M 720 250 L 800 250 L 720 260", 
+                  "M 720 250 L 850 250 L 720 260",
+                  "M 720 250 L 800 250 L 720 260"
+                ]}}
+                transition={{ duration: 0.2, repeat: Infinity }}
+              />
+            </motion.g>
           </motion.g>
+
+          {/* Side Fin */}
+          <motion.g 
+            initial={{ rotate: 0 }}
+            animate={{ rotate: [0, -20, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            originX="300" originY="260"
+          >
+            <path
+              d="M 300 260 L 260 380 L 400 350 L 380 280 Z"
+              fill="url(#metalGradient)"
+              stroke="#22d3ee"
+              strokeWidth="2"
+              filter="url(#glow)"
+              opacity="0.95"
+            />
+            
+            {/* Fin Mechanism Details */}
+            <circle cx="300" cy="260" r="10" fill="#1e293b" stroke="#22d3ee" />
+            <path d="M 300 260 L 280 360" stroke="#06b6d4" strokeWidth="1" strokeDasharray="4 2" />
+          </motion.g>
+
+          {/* Water Splash Effect (during jump) */}
+          <AnimatePresence>
+            {isJumping && (
+              <>
+                {/* Splash 1 */}
+                <motion.g
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: [0, 0.8, 0], scale: [0, 1, 1.5] }}
+                  transition={{ duration: 1, times: [0, 0.5, 1] }}
+                  exit={{ opacity: 0 }}
+                >
+                  <circle cx="100" cy="280" r="40" fill="url(#energyGradient)" opacity="0.3" />
+                  <circle cx="120" cy="270" r="25" fill="url(#energyGradient)" opacity="0.4" />
+                </motion.g>
+                
+                {/* Splash 2 */}
+                <motion.g
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: [0, 0.6, 0], scale: [0, 1, 1.3] }}
+                  transition={{ duration: 1, delay: 0.2, times: [0, 0.5, 1] }}
+                  exit={{ opacity: 0 }}
+                >
+                  <circle cx="60" cy="300" r="30" fill="url(#energyGradient)" opacity="0.3" />
+                </motion.g>
+              </>
+            )}
+          </AnimatePresence>
         </svg>
       </motion.div>
+
+      {/* Water Ripple Effects */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full border border-cyan-500/20"
+            style={{
+              left: `${30 + i * 15}%`,
+              top: "33%",
+              width: `${100 + i * 50}px`,
+              height: `${100 + i * 50}px`,
+            }}
+            animate={{
+              scale: [0, 2],
+              opacity: [0.5, 0]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              delay: i * 0.5,
+              ease: "easeOut"
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };
@@ -1715,7 +1857,7 @@ const ClientLogosSection = ({ logos }: any) => (
                           loading="lazy"
                           decoding="async"
                           className="h-12 sm:h-16 md:h-20 w-auto max-w-[80px] sm:max-w-[100px] md:max-w-[120px] object-cover rounded-full transition-all duration-300 opacity-70 hover:opacity-100 hover:scale-110"
-                          style={{ aspectRatio: "1/1" }} // ✅ Memastikan rasio 1:1
+                          style={{ aspectRatio: "1/1" }}
                           onError={(e: any) => { 
                               e.target.onerror = null; 
                               e.target.src="https://placehold.co/120x120/A0A0A0/FFFFFF?text=Client";
@@ -2354,197 +2496,196 @@ export default function LandingPage() {
       </section>
 
       {/* ================= PORTFOLIO WITH ENHANCED ANIMATIONS ================= */}
-{/* ================= PORTFOLIO WITH ENHANCED ANIMATIONS ================= */}
-<section id="portfolio" className="py-20 sm:py-32 bg-slate-900">
-  <div className="container mx-auto px-4 sm:px-6">
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-        <div className="max-w-2xl">
+      <section id="portfolio" className="py-20 sm:py-32 bg-slate-900">
+        <div className="container mx-auto px-4 sm:px-6">
           <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: "100%" }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: "easeInOut" }}
-            className="h-1 w-full bg-gradient-to-r from-cyan-500 to-blue-500 mb-6 rounded-full"
-          />
-          
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="block"
-            >
-              Featured Work
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-cyan-400 block text-lg font-normal mt-2"
-            >
-              Scroll to explore our latest projects
-            </motion.span>
-          </h2>
-          
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-lg text-slate-400"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            A selection of our recent projects that showcase our commitment to quality and innovation.
-          </motion.p>
-        </div>
-        
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <a href="/portfolio">
-            <Button variant="outline" className="whitespace-nowrap group">
-              <span className="flex items-center gap-2">
-                View All Projects
-                <motion.span
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ 
-                    duration: 1.5, 
-                    repeat: Infinity,
-                    repeatType: "reverse"
+            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+              <div className="max-w-2xl">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "100%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, ease: "easeInOut" }}
+                  className="h-1 w-full bg-gradient-to-r from-cyan-500 to-blue-500 mb-6 rounded-full"
+                />
+                
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className="block"
+                  >
+                    Featured Work
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="text-cyan-400 block text-lg font-normal mt-2"
+                  >
+                    Scroll to explore our latest projects
+                  </motion.span>
+                </h2>
+                
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="text-lg text-slate-400"
+                >
+                  A selection of our recent projects that showcase our commitment to quality and innovation.
+                </motion.p>
+              </div>
+              
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <a href="/portfolio">
+                  <Button variant="outline" className="whitespace-nowrap group">
+                    <span className="flex items-center gap-2">
+                      View All Projects
+                      <motion.span
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ 
+                          duration: 1.5, 
+                          repeat: Infinity,
+                          repeatType: "reverse"
+                        }}
+                      >
+                        <ChevronRight size={16} />
+                      </motion.span>
+                    </span>
+                  </Button>
+                </a>
+              </motion.div>
+            </div>
+
+            {/* Grid yang sudah dioptimalkan - 2 kolom untuk desktop */}
+            <motion.div 
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={{
+                visible: {
+                  transition: {
+                    staggerChildren: 0.1,
+                    delayChildren: 0.1
+                  }
+                },
+                hidden: {}
+              }}
+            >
+              {portfolioItems.map((project, index) => (
+                <motion.div
+                  key={project.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { 
+                      opacity: 1, 
+                      y: 0,
+                      transition: {
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 15
+                      }
+                    }
                   }}
                 >
-                  <ChevronRight size={16} />
-                </motion.span>
-              </span>
-            </Button>
-          </a>
-        </motion.div>
-      </div>
+                  <EnhancedPortfolioCard 
+                    project={project}
+                    index={index}
+                    onClick={handleProjectClick}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
 
-      {/* Grid yang sudah dioptimalkan - 2 kolom untuk desktop */}
-      <motion.div 
-        className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
-        variants={{
-          visible: {
-            transition: {
-              staggerChildren: 0.1,
-              delayChildren: 0.1
-            }
-          },
-          hidden: {}
-        }}
-      >
-        {portfolioItems.map((project, index) => (
-          <motion.div
-            key={project.id}
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { 
-                opacity: 1, 
-                y: 0,
-                transition: {
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 15
-                }
-              }
-            }}
-          >
-            <EnhancedPortfolioCard 
-              project={project}
-              index={index}
-              onClick={handleProjectClick}
-            />
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* Portfolio CTA dengan entrance animation */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ 
-          duration: 0.6, 
-          delay: 0.3,
-          type: "spring",
-          stiffness: 100
-        }}
-        className="mt-16 p-8 md:p-12 rounded-3xl text-center relative overflow-hidden group bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700"
-      >
-        {/* Animated background */}
-        <motion.div 
-          className="absolute inset-0 opacity-10"
-          animate={{
-            background: [
-              'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)',
-              'radial-gradient(circle at 70% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)',
-              'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)'
-            ]
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-        
-        <div className="relative z-10">
-          <motion.h3 
-            className="font-bold text-2xl md:text-3xl mb-4 text-white"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
-            Have a project in mind?
-          </motion.h3>
-          
-          <motion.p 
-            className="text-lg max-w-2xl mx-auto mb-8 text-slate-300"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            Let's discuss how we can help you achieve your goals. We're always excited to take on new challenges.
-          </motion.p>
-          
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <a href="#contact">
-              <Button size="lg" className="shadow-xl relative overflow-hidden">
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20"
-                  animate={{
-                    x: ['-100%', '100%']
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                />
-                <span className="relative z-10">Start a Conversation</span>
-              </Button>
-            </a>
+            {/* Portfolio CTA dengan entrance animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ 
+                duration: 0.6, 
+                delay: 0.3,
+                type: "spring",
+                stiffness: 100
+              }}
+              className="mt-16 p-8 md:p-12 rounded-3xl text-center relative overflow-hidden group bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700"
+            >
+              {/* Animated background */}
+              <motion.div 
+                className="absolute inset-0 opacity-10"
+                animate={{
+                  background: [
+                    'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)',
+                    'radial-gradient(circle at 70% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)',
+                    'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)'
+                  ]
+                }}
+                transition={{ duration: 8, repeat: Infinity }}
+              />
+              
+              <div className="relative z-10">
+                <motion.h3 
+                  className="font-bold text-2xl md:text-3xl mb-4 text-white"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Have a project in mind?
+                </motion.h3>
+                
+                <motion.p 
+                  className="text-lg max-w-2xl mx-auto mb-8 text-slate-300"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                >
+                  Let's discuss how we can help you achieve your goals. We're always excited to take on new challenges.
+                </motion.p>
+                
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <a href="#contact">
+                    <Button size="lg" className="shadow-xl relative overflow-hidden">
+                      <motion.span
+                        className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20"
+                        animate={{
+                          x: ['-100%', '100%']
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: "linear"
+                        }}
+                      />
+                      <span className="relative z-10">Start a Conversation</span>
+                    </Button>
+                  </a>
+                </motion.div>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
-      </motion.div>
-    </motion.div>
-  </div>
-</section>
+      </section>
 
       {/* ================= TESTIMONIALS SECTION (NEW) ================= */}
       <TestimonialsSection />
