@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
-import { prisma } from '@/app/lib/prisma'; 
+import { prisma } from '@/app/lib/prisma';
 import bcrypt from 'bcryptjs';
 
 // Skema validasi untuk memastikan input aman sebelum diproses ke DB
@@ -29,6 +29,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           if (!user) return null;
 
           // 3. Cek kecocokan password dengan yang ada di DB (sudah di-hash)
+          // Pastikan user.password ada (karena user OAuth mungkin tidak punya password)
           if (user.password) {
              const passwordsMatch = await bcrypt.compare(password, user.password);
              if (passwordsMatch) {
@@ -49,7 +50,9 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        // PENTING: Gunakan casting (user as any) untuk bypass error TypeScript "Property 'role' does not exist"
+        // Ini aman dilakukan karena kita tahu kolom role ada di database
+        token.role = (user as any).role;
       }
       return token;
     },
