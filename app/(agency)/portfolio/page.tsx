@@ -199,7 +199,7 @@ const PortfolioCard = ({ project, index, onClick }: any) => (
       </p>
       
       <div className="flex flex-wrap gap-2 mb-4">
-        {project.tags.slice(0, 3).map((tag: string, idx: number) => (
+        {(project.tags || project.techStack || []).slice(0, 3).map((tag: string, idx: number) => (
           <span key={idx} className="px-2 py-1 rounded text-xs font-medium bg-slate-800 text-slate-300">
             {tag}
           </span>
@@ -222,6 +222,37 @@ export default function PortfolioPage() {
   const portfolioItems = [
     {
       id: 1,
+      title: "OneClick Smart Resume",
+      category: "AI Platform",
+      client: "Swakarsa Digital",
+      image: "/portfolio/oneclick.png",
+      shortDescription: "Transform Your Resume Instantly",
+      description: "Stop letting bad formatting ruin your chances. Watch OneClick restructure your chaotic draft into an ATS-beating professional document. OneClick Smart Resume is an AI-powered resume optimization platform that helps job seekers transform their resumes into professional, ATS-friendly documents. The platform uses advanced AI to analyze, restructure, and optimize resumes, ensuring they pass Applicant Tracking Systems (ATS) and stand out to recruiters. We've successfully managed up to 500+ monthly users, helping job seekers improve their resume quality and job application success rates.",
+      duration: "6 months",
+      challenges: [
+        "Creating an AI system that accurately analyzes and optimizes resumes while maintaining user intent",
+        "Ensuring ATS compatibility across different applicant tracking systems",
+        "Handling high user volume (500+ monthly users) with reliable performance",
+        "Integrating secure payment processing while maintaining user trust",
+        "Providing accurate job matching recommendations"
+      ],
+      solutions: [
+        "Developed advanced AI algorithms trained on successful resume patterns and ATS requirements",
+        "Implemented comprehensive ATS compatibility testing and validation",
+        "Leveraged Supabase for scalable database and backend infrastructure",
+        "Integrated Stripe for secure, PCI-compliant payment processing",
+        "Created intelligent job matching algorithm based on resume content and job descriptions"
+      ],
+      results: [
+        { value: "500+", label: "Monthly Active Users" },
+        { value: "98%", label: "ATS Compatibility Score" },
+        { value: "24/7", label: "Uptime Availability" }
+      ],
+      techStack: ["React.js", "Vercel", "Supabase", "Stripe", "AI/ML"],
+      tags: ["AI", "Resume", "ATS", "Job Search"]
+    },
+    {
+      id: 2,
       title: "Maju Mobilindo",
       category: "E-commerce Website",
       client: "Maju Mobilindo - Used Car Dealer",
@@ -250,7 +281,7 @@ export default function PortfolioPage() {
       tags: ["E-commerce", "Automotive", "Search", "Booking"]
     },
     {
-      id: 2,
+      id: 3,
       title: "Alumka Lampung",
       category: "Company Profile",
       client: "PT Alumka Lampung - Building Materials Supplier",
@@ -279,7 +310,7 @@ export default function PortfolioPage() {
       tags: ["Company Profile", "Catalog", "WhatsApp", "B2B"]
     },
     {
-      id: 3,
+      id: 4,
       title: "AI FAQ System",
       category: "AI Solution",
       client: "Tech Startup Company",
@@ -308,7 +339,7 @@ export default function PortfolioPage() {
       tags: ["AI", "Chatbot", "NLP", "Automation"]
     },
     {
-      id: 4,
+      id: 5,
       title: "Hotel Dwipa Management System",
       category: "Hotel Management System",
       client: "Hotel Dwipa - Hospitality Business",
@@ -337,7 +368,7 @@ export default function PortfolioPage() {
       tags: ["Hospitality", "Booking", "Management", "Payment"]
     },
     {
-      id: 5,
+      id: 6,
       title: "Restaurant POS System",
       category: "Point of Sale System",
       client: "Restaurant Chain - F&B Business",
@@ -366,7 +397,7 @@ export default function PortfolioPage() {
       tags: ["POS", "Restaurant", "F&B", "Real-time"]
     },
     {
-      id: 6,
+      id: 7,
       title: "Transport Management System",
       category: "Logistics System",
       client: "Transportation Company - Logistics",
@@ -395,7 +426,7 @@ export default function PortfolioPage() {
       tags: ["Logistics", "Fleet Management", "GPS", "Optimization"]
     },
     {
-      id: 7,
+      id: 8,
       title: "Web Scraping Dashboard",
       category: "Data Collection System",
       client: "Market Research Company",

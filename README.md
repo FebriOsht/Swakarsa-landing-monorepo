@@ -158,6 +158,31 @@ Fitur-fitur ini belum diimplementasikan dan masuk ke rencana pengembangan tahap 
 
 1. Instalasi & Database
 
+**Option A: Using Neon (Serverless Postgres - Recommended)**
+
+1. Create a Neon account at https://neon.tech
+2. Create a new project and copy your connection string
+3. Create a `.env` file in the root directory:
+   ```env
+   DATABASE_URL="postgresql://username:password@ep-xxx-xxx.region.aws.neon.tech/dbname?sslmode=require"
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your-secret-key-here"
+   ```
+4. Install dependencies:
+   ```bash
+   npm install
+   ```
+5. Push schema to Neon:
+   ```bash
+   npx prisma db push
+   ```
+6. Seed the database:
+   ```bash
+   npx tsx prisma/seed.ts
+   ```
+
+**Option B: Using Local PostgreSQL**
+
 Pastikan PostgreSQL sudah aktif.
 
 # 1. Install dependencies
@@ -170,6 +195,8 @@ npx prisma db push
 # 3. PENTING: Isi Data Awal (Seeding)
 # Wajib dijalankan agar akun Admin, Klien, & Konsultan tersedia
 npx tsx prisma/seed.ts
+
+📖 **For detailed Neon setup instructions, see [NEON_SETUP.md](./NEON_SETUP.md)**
 
 
 2. Menjalankan Server Dev

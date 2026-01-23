@@ -115,6 +115,62 @@ async function main() {
   })
   console.log('Seeded Services/Skills')
 
+  // ==========================================
+  // 4. SEED PORTFOLIO PROJECTS
+  // ==========================================
+  await prisma.portfolioProject.upsert({
+    where: { id: 'oneclick-smart-resume' },
+    update: {},
+    create: {
+      id: 'oneclick-smart-resume',
+      title: 'OneClick Smart Resume',
+      category: 'AI Platform',
+      client: 'Swakarsa Digital',
+      image: 'https://placehold.co/800x600/1e293b/FFF?text=OneClick+Smart+Resume',
+      shortDescription: 'Transform Your Resume Instantly',
+      description: `Stop letting bad formatting ruin your chances. Watch OneClick restructure your chaotic draft into an ATS-beating professional document.
+
+OneClick Smart Resume is an AI-powered resume optimization platform that helps job seekers transform their resumes into professional, ATS-friendly documents. The platform uses advanced AI to analyze, restructure, and optimize resumes, ensuring they pass Applicant Tracking Systems (ATS) and stand out to recruiters.
+
+**Key Features:**
+- AI-powered resume optimization and restructuring
+- ATS-friendly formatting and structure
+- Job matching and discovery
+- Real-time resume analysis and scoring
+- Professional document generation
+
+**Impact:**
+- Successfully managing 500+ monthly active users
+- Helping job seekers improve their resume quality and job application success rates
+- Integrated payment system for seamless user experience
+
+**Technical Implementation:**
+Built with modern web technologies including React.js for the frontend, Vercel for deployment, Supabase for backend services and database, and Stripe for secure payment processing.`,
+      duration: '6 months',
+      challenges: [
+        'Creating an AI system that accurately analyzes and optimizes resumes while maintaining user intent',
+        'Ensuring ATS compatibility across different applicant tracking systems',
+        'Handling high user volume (500+ monthly users) with reliable performance',
+        'Integrating secure payment processing while maintaining user trust',
+        'Providing accurate job matching recommendations'
+      ],
+      solutions: [
+        'Developed advanced AI algorithms trained on successful resume patterns and ATS requirements',
+        'Implemented comprehensive ATS compatibility testing and validation',
+        'Leveraged Supabase for scalable database and backend infrastructure',
+        'Integrated Stripe for secure, PCI-compliant payment processing',
+        'Created intelligent job matching algorithm based on resume content and job descriptions'
+      ],
+      results: [
+        { value: '500+', label: 'Monthly Active Users' },
+        { value: '98%', label: 'ATS Compatibility Score' },
+        { value: '24/7', label: 'Uptime Availability' }
+      ],
+      techStack: ['React.js', 'Vercel', 'Supabase', 'Stripe', 'AI/ML']
+    }
+  })
+  console.log('Seeded Portfolio Projects')
+
   console.log('✅ Seeding completed successfully!')
 }
 

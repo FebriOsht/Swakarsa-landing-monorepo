@@ -157,9 +157,9 @@ export default function CyberFrog() {
       >
         {/* === TONGUE (Z-Index Bottom initially) === */}
         {/* Lidah ini hanya muncul saat makan bug */}
-        {bug && bug.status === 'being_eaten' && (
+        {bug && bug.status === 'being_eaten' && bug.x !== undefined && bug.y !== undefined && (
            <motion.path
-             d={`M50 75 Q ${50 + (bug.x - 50)/2} ${75 + (bug.y - 75)/2 - 15} ${bug.x} ${bug.y}`}
+             d={`M50 75 Q ${50 + ((bug.x || 50) - 50)/2} ${75 + ((bug.y || 75) - 75)/2 - 15} ${bug.x || 50} ${bug.y || 75}`}
              stroke="#ec4899" // Pink lidah
              strokeWidth="4"
              strokeLinecap="round"
@@ -261,14 +261,14 @@ export default function CyberFrog() {
 
         {/* === CYBER BUG VISUAL === */}
         <AnimatePresence>
-            {bug && bug.status === 'flying' && (
+            {bug && bug.status === 'flying' && bug.x !== undefined && bug.y !== undefined && (
                 <motion.g
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ 
                         scale: 1, 
                         opacity: 1,
-                        x: [bug.x - 2, bug.x + 2, bug.x - 2], // Buzzing effect
-                        y: [bug.y - 2, bug.y + 2, bug.y - 2]
+                        x: [(bug.x || 50) - 2, (bug.x || 50) + 2, (bug.x || 50) - 2], // Buzzing effect
+                        y: [(bug.y || 50) - 2, (bug.y || 50) + 2, (bug.y || 50) - 2]
                     }}
                     exit={{ scale: 0, opacity: 0, fill: "red" }} // Explode/vanish
                     transition={{ 

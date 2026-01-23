@@ -91,11 +91,10 @@ const MechaWhaleSVG = () => {
          Z-Index: -40px
       */}
       <motion.g 
-        style={{ transform: "translateZ(-40px)" }}
+        style={{ transform: "translateZ(-40px)", transformOrigin: "400px 250px" }}
         initial={{ rotate: 0 }}
         animate={{ rotate: [0, 15, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        originX="400" originY="250"
       >
         <path
           d="M 420 280 L 380 360 L 480 340 L 500 290 Z"
@@ -112,13 +111,12 @@ const MechaWhaleSVG = () => {
          This connects to the body but wiggles independently
       */}
       <motion.g
-        style={{ transform: "translateZ(-10px)" }}
+        style={{ transform: "translateZ(-10px)", transformOrigin: "580px 250px" }}
         animate={{ 
           rotateZ: [-5, 10, -5],
           y: [0, 5, 0]
         }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        originX="580" originY="250" // Pivot point at connection to body
       >
          {/* Tail Segment 1 */}
         <path
@@ -129,9 +127,9 @@ const MechaWhaleSVG = () => {
         />
         {/* Tail Segment 2 (The Fluke) */}
         <motion.g
+           style={{ transformOrigin: "680px 250px" }}
            animate={{ rotateZ: [-10, 15, -10] }}
            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-           originX="680" originY="250"
         >
             <path
               d="M 680 240 L 760 180 L 740 250 L 760 320 L 680 260 Z"
@@ -142,7 +140,7 @@ const MechaWhaleSVG = () => {
             />
             {/* Thruster Flame */}
             <motion.path
-              d="M 720 250 L 820 250 L 720 270"
+              initial={{ d: "M 720 250 L 800 250 L 720 260" }}
               fill="url(#energyGradient)"
               opacity="0.8"
               filter="url(#glow)"
@@ -212,8 +210,8 @@ const MechaWhaleSVG = () => {
           filter="url(#glow)"
         />
          {/* Core Spinner */}
-        <motion.g
-             style={{ originX: "400px", originY: "250px" }}
+         <motion.g
+             style={{ transformOrigin: "400px 250px" }}
              animate={{ rotate: 360 }}
              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
         >
@@ -227,11 +225,10 @@ const MechaWhaleSVG = () => {
          Z-Index: 40px
       */}
       <motion.g 
-        style={{ transform: "translateZ(40px)" }}
+        style={{ transform: "translateZ(40px)", transformOrigin: "300px 260px" }}
         initial={{ rotate: 0 }}
         animate={{ rotate: [0, -20, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        originX="300" originY="260"
       >
         <path
           d="M 300 260 L 260 380 L 400 350 L 380 280 Z"
