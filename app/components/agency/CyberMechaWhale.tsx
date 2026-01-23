@@ -15,7 +15,8 @@ const CyberWhale = () => {
   const rotateY = useTransform(mouseX, [-0.5, 0.5], [-15, 15]); // Left/Right tilt
   const brightness = useTransform(mouseY, [-0.5, 0.5], [1, 1.3]); // Highlight effect
 
-  const handleMouseMove = (e) => {
+  // PERBAIKAN DI SINI: Menambahkan tipe ': MouseEvent' pada parameter e
+  const handleMouseMove = (e: MouseEvent) => {
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
     // Calculate normalized position (-0.5 to 0.5)
@@ -88,7 +89,7 @@ const MechaWhaleSVG = () => {
       <Definitions />
 
       {/* LAYER 1: Far Fin (Behind body) 
-         Z-Index: -40px
+          Z-Index: -40px
       */}
       <motion.g 
         style={{ transform: "translateZ(-40px)", transformOrigin: "400px 250px" }}
@@ -108,7 +109,7 @@ const MechaWhaleSVG = () => {
       </motion.g>
 
       {/* LAYER 2: Tail (Moving Section)
-         This connects to the body but wiggles independently
+          This connects to the body but wiggles independently
       */}
       <motion.g
         style={{ transform: "translateZ(-10px)", transformOrigin: "580px 250px" }}
@@ -156,7 +157,7 @@ const MechaWhaleSVG = () => {
 
 
       {/* LAYER 3: Main Body 
-         Z-Index: 0px
+          Z-Index: 0px
       */}
       <g style={{ transform: "translateZ(0px)" }}>
         {/* Internal Skeleton (Visible through gaps) */}
@@ -222,7 +223,7 @@ const MechaWhaleSVG = () => {
 
 
       {/* LAYER 4: Near Fin (Closest to camera)
-         Z-Index: 40px
+          Z-Index: 40px
       */}
       <motion.g 
         style={{ transform: "translateZ(40px)", transformOrigin: "300px 260px" }}
@@ -244,7 +245,7 @@ const MechaWhaleSVG = () => {
       </motion.g>
 
        {/* LAYER 5: Holographic HUD Overlay (Closest)
-         Z-Index: 80px
+          Z-Index: 80px
       */}
       <motion.g style={{ transform: "translateZ(80px)" }} className="pointer-events-none">
           {/* Target Box around head */}
