@@ -15,7 +15,7 @@ const CyberWhale = () => {
   const rotateY = useTransform(mouseX, [-0.5, 0.5], [-15, 15]); // Left/Right tilt
   const brightness = useTransform(mouseY, [-0.5, 0.5], [1, 1.3]); // Highlight effect
 
-  // PERBAIKAN DI SINI: Menambahkan tipe ': MouseEvent' pada parameter e
+  // PERBAIKAN: Menambahkan tipe data ': MouseEvent' untuk native DOM event
   const handleMouseMove = (e: MouseEvent) => {
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
