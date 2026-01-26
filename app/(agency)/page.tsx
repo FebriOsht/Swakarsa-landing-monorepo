@@ -2237,7 +2237,7 @@ export default function LandingPage() {
     { icon: 'Facebook', href: "https://www.facebook.com/share/1B4CzChc4e", label: "Facebook", src: "/sosmed/facebook.png" },
     { icon: 'X', href: "https://x.com/swakarsadigital", label: "X (Twitter)", src: "/sosmed/x.png" },
     { icon: 'Linkedin', href: "https://www.linkedin.com/in/swakarsa-digital-65a651379", label: "LinkedIn", src: "/sosmed/linkedIn.png" },
-    { icon: 'GitHub', href: "https://github.com/swakarsadigital", label: "GitHub", src: "/sosmed/github.png" },
+    { icon: 'GitHub', href: "https://github.com/SwakarsaDigital", label: "GitHub", src: "/sosmed/github.png" },
   ];
 
   return (
