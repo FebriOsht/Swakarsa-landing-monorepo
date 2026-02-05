@@ -153,7 +153,7 @@ const CyberWhale = () => {
             filter="url(#glow)"
           />
           
-          {/* Core Spinner */}
+          {/* Core Spinner - Fixed Style Origin */}
           <motion.g
             style={{ originX: "400px", originY: "250px" }}
             animate={{ rotate: 360 }}
@@ -163,13 +163,13 @@ const CyberWhale = () => {
             <rect x="375" y="248" width="50" height="4" fill="#22d3ee" />
           </motion.g>
 
-          {/* Tail */}
+          {/* Tail - Fixed Style Origin */}
           <motion.g
             animate={{ 
               rotateZ: [-5, 10, -5],
             }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            originX="580" originY="250"
+            style={{ originX: "580px", originY: "250px" }}
           >
             <path
               d="M 580 220 L 680 230 L 680 270 L 580 280 Z"
@@ -178,11 +178,11 @@ const CyberWhale = () => {
               strokeWidth="1"
             />
             
-            {/* Tail Fluke */}
+            {/* Tail Fluke - Fixed Style Origin */}
             <motion.g
               animate={{ rotateZ: [-10, 15, -10] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-              originX="680" originY="250"
+              style={{ originX: "680px", originY: "250px" }}
             >
               <path
                 d="M 680 240 L 760 180 L 740 250 L 760 320 L 680 260 Z"
@@ -208,12 +208,12 @@ const CyberWhale = () => {
             </motion.g>
           </motion.g>
 
-          {/* Side Fin */}
+          {/* Side Fin - Fixed Style Origin */}
           <motion.g 
             initial={{ rotate: 0 }}
             animate={{ rotate: [0, -20, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            originX="300" originY="260"
+            style={{ originX: "300px", originY: "260px" }}
           >
             <path
               d="M 300 260 L 260 380 L 400 350 L 380 280 Z"
@@ -380,6 +380,7 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
     { name: "Home", href: "#home" },
     { name: "Process", href: "#process" },
     { name: "Team", href: "#team" },
+    { name: "Blog", href: "/blog" },
     { name: "Services", href: "#services" },
     { name: "Portfolio", href: "#portfolio" },
   ];
@@ -2231,7 +2232,7 @@ export default function LandingPage() {
     setSelectedSkill(null);
     setSelectedProject(null);
   };
-   
+    
   const socialMediaLinks = [
     { icon: 'Instagram', href: "https://www.instagram.com/swakarsa_digital", label: "Instagram", src: "/sosmed/instagram.jpeg" },
     { icon: 'Facebook', href: "https://www.facebook.com/share/1B4CzChc4e", label: "Facebook", src: "/sosmed/facebook.png" },

@@ -380,6 +380,7 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
     { name: "Home", href: "#home" },
     { name: "Process", href: "#process" },
     { name: "Team", href: "#team" },
+    { name: "Blog", href: "/blog" },
     { name: "Services", href: "#services" },
     { name: "Portfolio", href: "#portfolio" },
   ];

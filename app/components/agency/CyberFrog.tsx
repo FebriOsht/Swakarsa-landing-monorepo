@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useEffect } from "react";
 
 export default function CyberFrog() {
+  const [isMounted, setIsMounted] = useState(false);
   const [isRibbiting, setIsRibbiting] = useState(false);
   const [isBlinking, setIsBlinking] = useState(false);
   const [msgIndex, setMsgIndex] = useState(0);
@@ -11,7 +12,14 @@ export default function CyberFrog() {
   // --- BUG & EATING LOGIC ---
   const [bug, setBug] = useState<{ x: number; y: number; status: 'flying' | 'being_eaten' } | null>(null);
 
+  // Mencegah Hydration Error: Pastikan render hanya jalan di Client
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const spawnBugSequence = () => {
       // Tentukan posisi acak untuk serangga (dalam koordinat viewBox SVG 0-100 x, 0-60 y)
       const bugX = Math.random() * 80 + 10; // range 10 - 90
@@ -24,7 +32,7 @@ export default function CyberFrog() {
       setTimeout(() => {
         setBug((prev) => (prev ? { ...prev, status: 'being_eaten' as const } : null));
         
-        // Efek visual 'Ribbit' saat makan (opsional, tapi bagus untuk feedback)
+        // Efek visual 'Ribbit' saat makan
         setIsRibbiting(true);
         setTimeout(() => setIsRibbiting(false), 500);
       }, 2000);
@@ -43,7 +51,7 @@ export default function CyberFrog() {
       clearTimeout(initialTimer);
       clearInterval(intervalTimer);
     };
-  }, []);
+  }, [isMounted]);
 
 
   // --- MOUSE TRACKING LOGIC ---
@@ -56,11 +64,12 @@ export default function CyberFrog() {
   const pupilY = useSpring(useTransform(mouseY, [-500, 500], [-6, 6]), springConfig);
 
   useEffect(() => {
-    const handleMouseMove = (e: { clientX: number; clientY: number; }) => {
+    if (!isMounted) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
       // Jika sedang ada serangga, mata fokus ke serangga (override mouse)
       if (bug) {
         // Konversi koordinat SVG bug (0-100) kembali ke range pixel relatif untuk pupil
-        // Ini estimasi kasar agar mata melirik ke arah bug
         const targetX = (bug.x - 50) * 10; 
         const targetY = (bug.y - 50) * 10;
         mouseX.set(targetX);
@@ -76,10 +85,12 @@ export default function CyberFrog() {
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY, bug]); // Dependency 'bug' added so eyes track it
+  }, [mouseX, mouseY, bug, isMounted]);
 
   // --- BLINKING LOGIC ---
   useEffect(() => {
+    if (!isMounted) return;
+
     const blinkLoop = () => {
       setIsBlinking(true);
       setTimeout(() => setIsBlinking(false), 150);
@@ -88,7 +99,7 @@ export default function CyberFrog() {
     };
     const timeoutId = setTimeout(blinkLoop, 2000);
     return () => clearTimeout(timeoutId);
-  }, []);
+  }, [isMounted]);
 
   // --- INTERACTION LOGIC ---
   const messages = [
@@ -104,6 +115,9 @@ export default function CyberFrog() {
     setIsRibbiting(true);
     setTimeout(() => setIsRibbiting(false), 1500);
   };
+
+  // PENTING: Jangan render apapun jika belum mounted (Server Side Rendering)
+  if (!isMounted) return null;
 
   return (
     <motion.div
@@ -156,11 +170,10 @@ export default function CyberFrog() {
         transition={{ type: "spring", stiffness: 300, damping: 10 }}
       >
         {/* === TONGUE (Z-Index Bottom initially) === */}
-        {/* Lidah ini hanya muncul saat makan bug */}
         {bug && bug.status === 'being_eaten' && (
            <motion.path
              d={`M50 75 Q ${50 + (bug.x - 50)/2} ${75 + (bug.y - 75)/2 - 15} ${bug.x} ${bug.y}`}
-             stroke="#ec4899" // Pink lidah
+             stroke="#ec4899"
              strokeWidth="4"
              strokeLinecap="round"
              fill="none"
@@ -249,7 +262,6 @@ export default function CyberFrog() {
         </motion.g>
 
         {/* === MOUTH === */}
-        {/* Mulut terbuka sedikit saat makan */}
         <motion.path 
           d="M38 75 Q50 79 62 75" 
           stroke="#14532d" 
@@ -270,7 +282,7 @@ export default function CyberFrog() {
                         x: [bug.x - 2, bug.x + 2, bug.x - 2], // Buzzing effect
                         y: [bug.y - 2, bug.y + 2, bug.y - 2]
                     }}
-                    exit={{ scale: 0, opacity: 0, fill: "red" }} // Explode/vanish
+                    exit={{ scale: 0, opacity: 0, fill: "red" }}
                     transition={{ 
                         opacity: { duration: 0.2 },
                         x: { duration: 0.2, repeat: Infinity },

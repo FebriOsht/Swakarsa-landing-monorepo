@@ -2,24 +2,43 @@ import type { NextAuthConfig } from 'next-auth';
 
 export const authConfig = {
   pages: {
-    signIn: '/login', // Redirect user yang belum login ke sini
+    signIn: '/login',
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       
-      // Tentukan path yang DILINDUNGI (Wajib Login)
-      // Dalam kasus ini: semua yang ada di dalam folder (platform) yaitu /lab dan /guild
-      const isProtectedPlatform = nextUrl.pathname.startsWith('/lab') || nextUrl.pathname.startsWith('/guild');
+      // Deteksi jika user sedang mengakses halaman di dalam folder (platform) atau admin
+      const isOnDashboard = nextUrl.pathname.startsWith('/admin') || nextUrl.pathname.startsWith('/(platform)');
       
-      if (isProtectedPlatform) {
+      if (isOnDashboard) {
         if (isLoggedIn) return true;
-        return false; // Redirect ke /login jika mencoba akses halaman private tanpa login
+        return false; // Redirect unauthenticated users to login page
+      } else if (isLoggedIn) {
+        // Jika user sudah login dan mencoba akses halaman login lagi, lempar ke admin
+        if (nextUrl.pathname === '/login') {
+            return Response.redirect(new URL('/admin', nextUrl));
+        }
       }
-      
-      // Halaman publik (Home, Portfolio, Jobs, Login) boleh diakses siapa saja
       return true;
     },
+    // Pastikan session user menyimpan Role
+    async session({ session, token }) {
+        if (token.sub && session.user) {
+            // @ts-ignore
+            session.user.id = token.sub;
+            // @ts-ignore
+            session.user.role = token.role; 
+        }
+        return session;
+    },
+    async jwt({ token, user }) {
+        if (user) {
+            // @ts-ignore
+            token.role = user.role;
+        }
+        return token;
+    }
   },
-  providers: [], // Providers didefinisikan di auth.ts untuk menghindari isu dependensi pada Edge runtime
+  providers: [], // Providers diatur di auth.ts
 } satisfies NextAuthConfig;
