@@ -85,13 +85,13 @@ model PortfolioProject {
   imageUrl    String?
   link        String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @updatedAt @default(now())
 }
 
 // Digunakan di Homepage (Skills Section)
 model Skill {
   id   Int     @id @default(autoincrement())
-  name String
+  name String @default("Unnamed Skill")
   icon String? // Bisa path SVG atau nama icon
 }
 
