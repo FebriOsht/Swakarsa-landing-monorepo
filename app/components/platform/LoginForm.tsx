@@ -1,15 +1,16 @@
 'use client';
 
 import { authenticate } from '../../lib/auth-actions';
-import { useActionState } from 'react'; // Ganti useFormState dengan useActionState
+// PERBAIKAN: Gunakan useFormState dari react-dom (bukan useActionState dari react)
+import { useFormState } from 'react-dom'; 
 import { useFormStatus } from 'react-dom';
 import { Lock, Loader2, AlertCircle } from 'lucide-react';
 
 export default function LoginForm() {
-  // PERUBAHAN DI SINI:
-  // React 19 mengubah useFormState menjadi useActionState
-  // Return value-nya juga sedikit berbeda (ada isPending di index ke-2), tapi logic utamanya sama.
-  const [errorMessage, dispatch, isPending] = useActionState(authenticate, undefined);
+  // PERBAIKAN: useFormState mengembalikan [state, dispatch].
+  // Variabel 'isPending' dihapus karena useFormState versi ini tidak mengembalikannya 
+  // (status loading ditangani oleh useFormStatus di komponen tombol).
+  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
 
   return (
     <form action={dispatch} className="space-y-6">

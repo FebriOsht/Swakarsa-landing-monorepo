@@ -1,4 +1,7 @@
+// ==========================================
 // 1. GENERATOR & DATASOURCE
+// ==========================================
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -194,8 +197,11 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// --- MODEL LAYANAN (SERVICES) ---
+// ==========================================
+// 6. MODEL LAYANAN (SERVICES)
+// ==========================================
 // Digunakan di halaman Services / Solutions
+
 model Service {
   id               String   @id @default(cuid())
   title            String
@@ -204,7 +210,7 @@ model Service {
   shortDescription String?
   description      String?  @db.Text
   
-  // Karena menggunakan PostgreSQL, kita bisa pakai Array String (String[])
+  // Array String (Fitur PostgreSQL)
   techStack        String[] 
   features         String[]
   useCases         String[]
