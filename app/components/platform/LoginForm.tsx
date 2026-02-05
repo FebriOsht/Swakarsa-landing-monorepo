@@ -1,16 +1,13 @@
 'use client';
 
 import { authenticate } from '../../lib/auth-actions';
-// PERBAIKAN: Gunakan useFormState dari react-dom (bukan useActionState dari react)
-import { useFormState } from 'react-dom'; 
+import { useActionState } from 'react'; 
 import { useFormStatus } from 'react-dom';
 import { Lock, Loader2, AlertCircle } from 'lucide-react';
 
 export default function LoginForm() {
-  // PERBAIKAN: useFormState mengembalikan [state, dispatch].
-  // Variabel 'isPending' dihapus karena useFormState versi ini tidak mengembalikannya 
-  // (status loading ditangani oleh useFormStatus di komponen tombol).
-  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+  // React 19: useActionState(fn, initialState)
+  const [errorMessage, dispatch, isPending] = useActionState(authenticate, undefined);
 
   return (
     <form action={dispatch} className="space-y-6">
@@ -32,13 +29,14 @@ export default function LoginForm() {
             name="password"
             placeholder="••••••••"
             required
+            // Tambahkan autoComplete untuk menghilangkan warning browser
+            autoComplete="current-password" 
             className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all placeholder:text-slate-600"
           />
           <Lock size={16} className="absolute right-4 top-3.5 text-slate-500" />
         </div>
       </div>
 
-      {/* Menampilkan Error jika login gagal */}
       {errorMessage && (
         <div className="flex items-center gap-2 text-red-400 text-sm bg-red-900/20 p-3 rounded-lg border border-red-900/50">
           <AlertCircle size={16} />
@@ -51,7 +49,6 @@ export default function LoginForm() {
   );
 }
 
-// Tombol terpisah agar bisa menggunakan hook useFormStatus
 function LoginButton() {
   const { pending } = useFormStatus();
 
