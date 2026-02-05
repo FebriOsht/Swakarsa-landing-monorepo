@@ -1,3 +1,4 @@
+// 1. GENERATOR & DATASOURCE
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,7 +8,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --- MODEL USER & AUTHENTICATION ---
+// ==========================================
+// 2. MODEL USER & AUTHENTICATION
+// ==========================================
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -15,16 +19,24 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          String    @default("USER")
+  role          String    @default("USER") // "USER", "ADMIN", "CONSULTANT"
 
   accounts Account[]
   sessions Session[]
+
+  // --- RELASI UNTUK FITUR PLATFORM (The Lab & The Guild) ---
+  heroProfile    HeroProfile?
+  clientProjects ClientProject[] @relation("ClientProjects")
+  questProjects  ProjectMember[] @relation("HeroProjects")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// --- MODEL BLOG POST ---
+// ==========================================
+// 3. MODEL AGENCY (Blog, Kontak, Team, Portfolio)
+// ==========================================
+
 model BlogPost {
   id        String   @id @default(cuid())
   title     String
@@ -36,7 +48,6 @@ model BlogPost {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // FIELD BARU: Penulis & Kategori
   author   String? @default("Admin")
   category String? @default("Umum")
 
@@ -44,17 +55,110 @@ model BlogPost {
   ctaLink String?
 }
 
-// --- MODEL KONTAK ---
 model ContactMessage {
   id        String   @id @default(cuid())
   name      String
   email     String
   subject   String?
   message   String   @db.Text
+  status    String   @default("UNREAD") // UNREAD, READ
   createdAt DateTime @default(now())
 }
 
-// --- NEXTAUTH BOILERPLATE ---
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  name      String
+  role      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// Digunakan di Homepage & Portfolio Page
+model PortfolioProject {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  category    String?  // Web, Mobile, UI/UX
+  imageUrl    String?
+  link        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Digunakan di Homepage (Skills Section)
+model Skill {
+  id   Int     @id @default(autoincrement())
+  name String
+  icon String? // Bisa path SVG atau nama icon
+}
+
+// Digunakan di Halaman Jobs
+model JobApplication {
+  id           String   @id @default(cuid())
+  fullName     String
+  email        String
+  phone        String
+  location     String
+  hasWorkspace Boolean
+  experience   String   @db.Text
+  status       String   @default("NEW") // NEW, REVIEWING, REJECTED, HIRED
+  createdAt    DateTime @default(now())
+}
+
+// ==========================================
+// 4. MODEL PLATFORM (The Lab & The Guild)
+// ==========================================
+
+// Profil "Hero" untuk Consultant/Freelancer
+model HeroProfile {
+  id            String  @id @default(cuid())
+  nickname      String
+  isAvailable   Boolean @default(true)
+  
+  // RPG Stats
+  statSpeed     Int     @default(50)
+  statLogic     Int     @default(50)
+  statAesthetic Int     @default(50)
+  tier          String  @default("Specialist") // Specialist, Elite, Legend
+  xp            Int     @default(0)
+
+  userId        String  @unique
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Project yang dibuat oleh Client (The Lab)
+model ClientProject {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  totalRate   Float    @default(0)
+  status      String   @default("NEGOTIATION") // NEGOTIATION, ACTIVE, COMPLETED
+  
+  clientId    String
+  client      User     @relation("ClientProjects", fields: [clientId], references: [id])
+  
+  members     ProjectMember[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Anggota squad/party dalam sebuah Project
+model ProjectMember {
+  id        String        @id @default(cuid())
+  projectId String
+  project   ClientProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  heroId    String
+  hero      User          @relation("HeroProjects", fields: [heroId], references: [id])
+  
+  joinedAt  DateTime      @default(now())
+}
+
+// ==========================================
+// 5. NEXTAUTH BOILERPLATE
+// ==========================================
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -88,12 +192,4 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model TeamMember {
-  id        Int      @id @default(autoincrement())
-  name      String
-  role      String?
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
 }
