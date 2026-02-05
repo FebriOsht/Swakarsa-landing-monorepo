@@ -2,43 +2,58 @@ import type { NextAuthConfig } from 'next-auth';
 
 export const authConfig = {
   pages: {
-    signIn: '/login',
+    signIn: '/login', // Halaman login custom Anda
   },
   callbacks: {
+    // Logika untuk membatasi akses (Middleware)
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       
-      // Deteksi jika user sedang mengakses halaman di dalam folder (platform) atau admin
-      const isOnDashboard = nextUrl.pathname.startsWith('/admin') || nextUrl.pathname.startsWith('/(platform)');
+      // 1. Definisikan halaman-halaman yang Wajib Login (Protected Routes)
+      // Perhatikan: Folder (platform) tidak masuk ke URL.
+      const protectedPaths = ['/admin', '/lab', '/guild', '/settings'];
       
-      if (isOnDashboard) {
+      // Cek apakah user sedang membuka salah satu halaman di atas
+      const isOnProtectedPage = protectedPaths.some(path => 
+        nextUrl.pathname.startsWith(path)
+      );
+
+      if (isOnProtectedPage) {
         if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        // Jika user sudah login dan mencoba akses halaman login lagi, lempar ke admin
+        return false; // Redirect otomatis ke /login jika belum login
+      } 
+      
+      // 2. Jika user sudah login tapi membuka halaman /login, redirect mereka
+      else if (isLoggedIn) {
         if (nextUrl.pathname === '/login') {
-            return Response.redirect(new URL('/admin', nextUrl));
+          // Redirect ke default dashboard. 
+          // Idealnya disesuaikan role, tapi redirect ke /admin atau /home cukup aman.
+          return Response.redirect(new URL('/admin', nextUrl));
         }
       }
+      
+      // Izinkan akses ke halaman lain (public) seperti /, /blog, /contact
       return true;
     },
-    // Pastikan session user menyimpan Role
-    async session({ session, token }) {
-        if (token.sub && session.user) {
-            // @ts-ignore
-            session.user.id = token.sub;
-            // @ts-ignore
-            session.user.role = token.role; 
-        }
-        return session;
-    },
+
+    // Callback JWT: Menyimpan role dari User ke Token saat login
     async jwt({ token, user }) {
-        if (user) {
-            // @ts-ignore
-            token.role = user.role;
-        }
-        return token;
-    }
+      if (user) {
+        // @ts-ignore: Mengabaikan error TypeScript jika tipe belum didefinisikan
+        token.role = user.role;
+      }
+      return token;
+    },
+
+    // Callback Session: Menyalin data dari Token ke Session agar bisa diakses di Client/Server Component
+    async session({ session, token }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+        // @ts-ignore
+        session.user.role = token.role as string; 
+      }
+      return session;
+    },
   },
-  providers: [], // Providers diatur di auth.ts
+  providers: [], // Biarkan kosong. Providers diisi di auth.ts untuk menghindari isu environment Edge.
 } satisfies NextAuthConfig;
