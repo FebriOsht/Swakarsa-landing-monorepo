@@ -193,3 +193,22 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+// --- MODEL LAYANAN (SERVICES) ---
+// Digunakan di halaman Services / Solutions
+model Service {
+  id               String   @id @default(cuid())
+  title            String
+  category         String
+  image            String?
+  shortDescription String?
+  description      String?  @db.Text
+  
+  // Karena menggunakan PostgreSQL, kita bisa pakai Array String (String[])
+  techStack        String[] 
+  features         String[]
+  useCases         String[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
