@@ -155,7 +155,7 @@ const CyberWhale = () => {
           
           {/* Core Spinner */}
           <motion.g
-            style={{ originX: "400px", originY: "250px" }}
+            style={{ transformOrigin: "400px 250px" }}
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           >
@@ -165,11 +165,11 @@ const CyberWhale = () => {
 
           {/* Tail */}
           <motion.g
+            style={{ transformOrigin: "580px 250px" }}
             animate={{ 
               rotateZ: [-5, 10, -5],
             }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            originX="580" originY="250"
           >
             <path
               d="M 580 220 L 680 230 L 680 270 L 580 280 Z"
@@ -180,9 +180,9 @@ const CyberWhale = () => {
             
             {/* Tail Fluke */}
             <motion.g
+              style={{ transformOrigin: "680px 250px" }}
               animate={{ rotateZ: [-10, 15, -10] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-              originX="680" originY="250"
             >
               <path
                 d="M 680 240 L 760 180 L 740 250 L 760 320 L 680 260 Z"
@@ -194,7 +194,7 @@ const CyberWhale = () => {
               
               {/* Thruster Flame */}
               <motion.path
-                d="M 720 250 L 820 250 L 720 270"
+                initial={{ d: "M 720 250 L 800 250 L 720 260" }}
                 fill="url(#energyGradient)"
                 opacity="0.8"
                 filter="url(#glow)"
@@ -210,10 +210,10 @@ const CyberWhale = () => {
 
           {/* Side Fin */}
           <motion.g 
+            style={{ transformOrigin: "300px 260px" }}
             initial={{ rotate: 0 }}
             animate={{ rotate: [0, -20, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            originX="300" originY="260"
           >
             <path
               d="M 300 260 L 260 380 L 400 350 L 380 280 Z"
@@ -635,12 +635,12 @@ const CyberFrog = () => {
             <path d="M82 50H86" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
         </motion.g>
         <motion.path d="M38 75 Q50 79 62 75" stroke="#14532d" strokeWidth="3" strokeLinecap="round" fill="none" animate={bug && bug.status === 'being_eaten' ? { d: "M38 75 Q50 85 62 75" } : { d: "M38 75 Q50 79 62 75" }} />
-        {bug && bug.status === 'being_eaten' && (
-           <motion.path d={`M50 75 Q ${50 + (bug.x - 50)/2} ${75 + (bug.y - 75)/2 - 15} ${bug.x} ${bug.y}`} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }} transition={{ duration: 0.3, times: [0, 0.5, 1] }} />
+        {bug && bug.status === 'being_eaten' && bug.x !== undefined && bug.y !== undefined && (
+           <motion.path d={`M50 75 Q ${50 + ((bug.x || 50) - 50)/2} ${75 + ((bug.y || 75) - 75)/2 - 15} ${bug.x || 50} ${bug.y || 75}`} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }} transition={{ duration: 0.3, times: [0, 0.5, 1] }} />
         )}
         <AnimatePresence>
-            {bug && bug.status === 'flying' && (
-                <motion.g initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1, x: [bug.x - 2, bug.x + 2, bug.x - 2], y: [bug.y - 2, bug.y + 2, bug.y - 2] }} exit={{ scale: 0, opacity: 0, fill: "red" }} transition={{ opacity: { duration: 0.2 }, x: { duration: 0.2, repeat: Infinity }, y: { duration: 0.3, repeat: Infinity } }}>
+            {bug && bug.status === 'flying' && bug.x !== undefined && bug.y !== undefined && (
+                <motion.g initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1, x: [(bug.x || 50) - 2, (bug.x || 50) + 2, (bug.x || 50) - 2], y: [(bug.y || 50) - 2, (bug.y || 50) + 2, (bug.y || 50) - 2] }} exit={{ scale: 0, opacity: 0, fill: "red" }} transition={{ opacity: { duration: 0.2 }, x: { duration: 0.2, repeat: Infinity }, y: { duration: 0.3, repeat: Infinity } }}>
                     <circle cx="0" cy="0" r="3" fill="#1e293b" />
                     <ellipse cx="-3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
                     <ellipse cx="3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
@@ -774,8 +774,8 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
               <path d="M18 50H10" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
               <path d="M82 50H90" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
               <motion.path d="M38 75 Q50 80 62 75" stroke="#14532d" strokeLinecap="round" fill="none" animate={isMouthOpen ? { d: "M38 75 Q50 85 62 75", strokeWidth: 4 } : isSwallowing ? { d: ["M38 75 Q50 80 62 75", "M38 75 Q50 83 62 75", "M38 75 Q50 80 62 75"], strokeWidth: 3, transition: { duration: 0.3, repeat: Infinity, ease: "easeInOut" } } : { d: "M38 75 Q50 80 62 75", strokeWidth: 3 }} />
-              {isFeeding && !showAccessGranted && (
-                 <motion.path d={tonguePath} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.1 }} />
+              {isFeeding && !showAccessGranted && tonguePath && (
+                 <motion.path d={tonguePath || "M50 75 Q50 75 50 75"} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.1 }} />
               )}
               <circle cx="26" cy="68" r="5" fill="#f472b6" opacity="0.5" />
               <circle cx="74" cy="68" r="5" fill="#f472b6" opacity="0.5" />
@@ -2710,12 +2710,12 @@ export default function LandingPage() {
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                     <Button size="lg" className="shadow-2xl shadow-cyan-500/40">
-                        <a href="/contact" className="flex items-center gap-2">
+                        <a href="https://mail.google.com/mail/u/0/?view=cm&fs=1&to=swakarsadigital@gmail.com&su=Free%20Consultation%20Request&body=Hello%20Swakarsa%20Digital%2C%0A%0AI%20would%20like%20to%20book%20a%20free%20consultation%20to%20discuss%20my%20website%20and%20marketing%20needs.%0A%0APlease%20let%20me%20know%20your%20availability.%0A%0AThank%20you%21" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                              Book Free Consultation
                         </a>
                     </Button>
                     <Button size="lg" variant="outline">
-                        <a href="mailto:swakarsadigital@gmail.com" className="flex items-center gap-2">
+                        <a href="https://mail.google.com/mail/u/0/?view=cm&fs=1&to=swakarsadigital@gmail.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                              Send Email
                         </a>
                     </Button>

@@ -197,7 +197,14 @@ export const Footer = () => (
       <h2 className="text-4xl font-extrabold mb-6">Ready to Level Up?</h2>
       <p className="text-xl text-slate-400 mb-10">Consult your website & marketing needs with us.</p>
       <div className="flex justify-center gap-4 mb-12">
-        <a href="https://wa.me/6282279513201" className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl font-bold shadow-lg shadow-cyan-500/25 hover:from-cyan-500 hover:to-teal-500 transition">Book Consultation</a>
+        <a 
+          href="https://mail.google.com/mail/u/0/?view=cm&fs=1&to=swakarsadigital@gmail.com&su=Free%20Consultation%20Request&body=Hello%20Swakarsa%20Digital%2C%0A%0AI%20would%20like%20to%20book%20a%20free%20consultation%20to%20discuss%20my%20website%20and%20marketing%20needs.%0A%0APlease%20let%20me%20know%20your%20availability.%0A%0AThank%20you%21" 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl font-bold shadow-lg shadow-cyan-500/25 hover:from-cyan-500 hover:to-teal-500 transition"
+        >
+          Book Free Consultation
+        </a>
       </div>
       <div className="h-px w-full bg-slate-800 my-12"></div>
       <p className="text-slate-500">© {new Date().getFullYear()} Swakarsa Digital. All Rights Reserved.</p>

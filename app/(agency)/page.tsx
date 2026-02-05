@@ -1,36 +1,39 @@
 "use client";
 
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring, animate, PanInfo } from "framer-motion";
-// Importing Lucide icons
 import { 
   Mail, Phone, Globe, Menu, X, ChevronRight, ExternalLink, ArrowRight, 
   Code, Cpu, Layers, Sparkles, ChevronDown, Bug, ChevronLeft,
   MessageSquareQuote, CheckCircle2, HelpCircle, Plus, Minus, Rocket, Search
 } from "lucide-react";
-import { useState, useEffect, useRef, memo } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 // ================= CYBER MECHA WHALE COMPONENT (JUMPING ANIMATION) =================
 const CyberWhale = () => {
   const [isJumping, setIsJumping] = useState(false);
 
-  // Start jumping animation every 20 seconds
   useEffect(() => {
+    let initialTimer: NodeJS.Timeout;
+    let intervalTimer: NodeJS.Timeout;
+    let resetTimer: NodeJS.Timeout;
+
     const startJumping = () => {
       setIsJumping(true);
-      // Reset after animation completes (4 seconds for jump + hang time)
-      setTimeout(() => setIsJumping(false), 4000);
+      // Reset after animation completes
+      resetTimer = setTimeout(() => setIsJumping(false), 4000);
     };
 
     // Initial jump after 3 seconds
-    const initialTimer = setTimeout(startJumping, 3000);
+    initialTimer = setTimeout(startJumping, 3000);
     
     // Set interval for subsequent jumps
-    const intervalTimer = setInterval(startJumping, 20000);
+    intervalTimer = setInterval(startJumping, 20000);
 
     return () => {
       clearTimeout(initialTimer);
       clearInterval(intervalTimer);
+      clearTimeout(resetTimer);
     };
   }, []);
 
@@ -64,7 +67,7 @@ const CyberWhale = () => {
         } : {
           duration: 0
         }}
-        className="absolute w-[500px] sm:w-[700px] md:w-[900px] opacity-90 z-20"
+        className="absolute w-[500px] sm:w-[700px] md:w-[900px] opacity-90 z-10" // Fixed Z-index to not block content
       >
         <svg
           viewBox="0 0 800 500"
@@ -155,7 +158,7 @@ const CyberWhale = () => {
           
           {/* Core Spinner - Fixed Style Origin */}
           <motion.g
-            style={{ originX: "400px", originY: "250px" }}
+            style={{ transformOrigin: "400px 250px" }}
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           >
@@ -165,11 +168,11 @@ const CyberWhale = () => {
 
           {/* Tail - Fixed Style Origin */}
           <motion.g
+            style={{ transformOrigin: "580px 250px" }}
             animate={{ 
               rotateZ: [-5, 10, -5],
             }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            style={{ originX: "580px", originY: "250px" }}
           >
             <path
               d="M 580 220 L 680 230 L 680 270 L 580 280 Z"
@@ -180,9 +183,9 @@ const CyberWhale = () => {
             
             {/* Tail Fluke - Fixed Style Origin */}
             <motion.g
+              style={{ transformOrigin: "680px 250px", originX: "680px", originY: "250px" }}
               animate={{ rotateZ: [-10, 15, -10] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-              style={{ originX: "680px", originY: "250px" }}
             >
               <path
                 d="M 680 240 L 760 180 L 740 250 L 760 320 L 680 260 Z"
@@ -194,7 +197,7 @@ const CyberWhale = () => {
               
               {/* Thruster Flame */}
               <motion.path
-                d="M 720 250 L 820 250 L 720 270"
+                initial={{ d: "M 720 250 L 800 250 L 720 260" }}
                 fill="url(#energyGradient)"
                 opacity="0.8"
                 filter="url(#glow)"
@@ -210,10 +213,10 @@ const CyberWhale = () => {
 
           {/* Side Fin - Fixed Style Origin */}
           <motion.g 
+            style={{ transformOrigin: "300px 260px" }}
             initial={{ rotate: 0 }}
             animate={{ rotate: [0, -20, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            style={{ originX: "300px", originY: "260px" }}
           >
             <path
               d="M 300 260 L 260 380 L 400 350 L 380 280 Z"
@@ -380,7 +383,6 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
     { name: "Home", href: "#home" },
     { name: "Process", href: "#process" },
     { name: "Team", href: "#team" },
-    { name: "Blog", href: "/blog" },
     { name: "Services", href: "#services" },
     { name: "Portfolio", href: "#portfolio" },
   ];
@@ -404,7 +406,8 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
               loading="eager"
               onError={(e: any) => {
                 e.target.onerror = null;
-                e.target.src = "/trust/maju mobilindo.jpeg";
+                // Fallback placedholder
+                e.target.src = "https://placehold.co/100x100/333/FFF?text=S";
               }}
             />
           </div>
@@ -429,12 +432,6 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-4">
-           <a 
-             href="/login"
-             className="px-5 py-2 rounded-full border border-white/10 hover:border-cyan-500/50 text-slate-300 hover:text-cyan-400 text-sm font-medium transition-all hover:bg-white/5"
-           >
-             Login
-           </a>
            <a 
              href="#contact"
              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-semibold shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/30 transition-all transform hover:-translate-y-0.5"
@@ -471,11 +468,11 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
             ))}
             <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent my-2"></div>
             <a 
-              href="/login"
+              href="#contact"
               className="block text-lg font-medium px-4 py-2 rounded-lg text-center transition-colors bg-cyan-500/10 text-white hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-500/50"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Login
+              Let's Talk
             </a>
          </div>
       </motion.div>
@@ -491,24 +488,37 @@ const CyberFrog = () => {
   const [bug, setBug] = useState<{ x: number; y: number; status: 'flying' | 'being_eaten' } | null>(null);
 
   useEffect(() => {
+    let initialTimer: NodeJS.Timeout;
+    let intervalTimer: NodeJS.Timeout;
+    let eatenTimer: NodeJS.Timeout;
+    let clearBugTimer: NodeJS.Timeout;
+    let ribbitTimer: NodeJS.Timeout;
+
     const spawnBugSequence = () => {
       const bugX = Math.random() * 80 + 10;
       const bugY = Math.random() * 50 + 5;
       setBug({ x: bugX, y: bugY, status: 'flying' });
-      setTimeout(() => {
+      
+      eatenTimer = setTimeout(() => {
         setBug(prev => prev ? { ...prev, status: 'being_eaten' } : null);
         setIsRibbiting(true);
-        setTimeout(() => setIsRibbiting(false), 500);
+        ribbitTimer = setTimeout(() => setIsRibbiting(false), 500);
       }, 2000);
-      setTimeout(() => {
+      
+      clearBugTimer = setTimeout(() => {
         setBug(null);
       }, 2300);
     };
-    const initialTimer = setTimeout(spawnBugSequence, 3000);
-    const intervalTimer = setInterval(spawnBugSequence, 20000);
+
+    initialTimer = setTimeout(spawnBugSequence, 3000);
+    intervalTimer = setInterval(spawnBugSequence, 20000);
+    
     return () => {
       clearTimeout(initialTimer);
       clearInterval(intervalTimer);
+      clearTimeout(eatenTimer);
+      clearTimeout(clearBugTimer);
+      clearTimeout(ribbitTimer);
     };
   }, []);
 
@@ -537,13 +547,14 @@ const CyberFrog = () => {
   }, [mouseX, mouseY, bug]);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     const blinkLoop = () => {
       setIsBlinking(true);
       setTimeout(() => setIsBlinking(false), 150);
       const nextBlink = Math.random() * 4000 + 2000;
-      setTimeout(blinkLoop, nextBlink);
+      timeoutId = setTimeout(blinkLoop, nextBlink);
     };
-    const timeoutId = setTimeout(blinkLoop, 2000);
+    timeoutId = setTimeout(blinkLoop, 2000);
     return () => clearTimeout(timeoutId);
   }, []);
 
@@ -635,12 +646,12 @@ const CyberFrog = () => {
             <path d="M82 50H86" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
         </motion.g>
         <motion.path d="M38 75 Q50 79 62 75" stroke="#14532d" strokeWidth="3" strokeLinecap="round" fill="none" animate={bug && bug.status === 'being_eaten' ? { d: "M38 75 Q50 85 62 75" } : { d: "M38 75 Q50 79 62 75" }} />
-        {bug && bug.status === 'being_eaten' && (
-           <motion.path d={`M50 75 Q ${50 + (bug.x - 50)/2} ${75 + (bug.y - 75)/2 - 15} ${bug.x} ${bug.y}`} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }} transition={{ duration: 0.3, times: [0, 0.5, 1] }} />
+        {bug && bug.status === 'being_eaten' && bug.x !== undefined && bug.y !== undefined && (
+           <motion.path d={`M50 75 Q ${50 + ((bug.x || 50) - 50)/2} ${75 + ((bug.y || 75) - 75)/2 - 15} ${bug.x || 50} ${bug.y || 75}`} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }} transition={{ duration: 0.3, times: [0, 0.5, 1] }} />
         )}
         <AnimatePresence>
-            {bug && bug.status === 'flying' && (
-                <motion.g initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1, x: [bug.x - 2, bug.x + 2, bug.x - 2], y: [bug.y - 2, bug.y + 2, bug.y - 2] }} exit={{ scale: 0, opacity: 0, fill: "red" }} transition={{ opacity: { duration: 0.2 }, x: { duration: 0.2, repeat: Infinity }, y: { duration: 0.3, repeat: Infinity } }}>
+            {bug && bug.status === 'flying' && bug.x !== undefined && bug.y !== undefined && (
+                <motion.g initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1, x: [(bug.x || 50) - 2, (bug.x || 50) + 2, (bug.x || 50) - 2], y: [(bug.y || 50) - 2, (bug.y || 50) + 2, (bug.y || 50) - 2] }} exit={{ scale: 0, opacity: 0, fill: "red" }} transition={{ opacity: { duration: 0.2 }, x: { duration: 0.2, repeat: Infinity }, y: { duration: 0.3, repeat: Infinity } }}>
                     <circle cx="0" cy="0" r="3" fill="#1e293b" />
                     <ellipse cx="-3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
                     <ellipse cx="3" cy="-2" rx="3" ry="1.5" fill="#ef4444" opacity="0.8" className="animate-pulse" />
@@ -661,6 +672,7 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const [showAccessGranted, setShowAccessGranted] = useState(false);
   const [isMouthOpen, setIsMouthOpen] = useState(false);
   const [isSwallowing, setIsSwallowing] = useState(false);
+  const router = useRouter(); // FIX: Use next/navigation router
 
   // --- MOTION VALUES FOR BUG POSITION (To Sync Eyes) ---
   const bugX = useMotionValue(50);
@@ -722,9 +734,15 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           setIsMouthOpen(false);
           setShowAccessGranted(true);
           setTimeout(() => {
-            window.location.href = "/team"; 
+            // FIX: Use router.push for SPA navigation instead of window.location
+            router.push("/team"); 
             onClose();
-          }, 300); 
+            // Reset state after closure
+            setTimeout(() => {
+              setIsFeeding(false);
+              setShowAccessGranted(false);
+            }, 500);
+          }, 1000); 
         }, 1000); 
     }});
   };
@@ -774,8 +792,8 @@ const FrogGatekeeper = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
               <path d="M18 50H10" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
               <path d="M82 50H90" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" />
               <motion.path d="M38 75 Q50 80 62 75" stroke="#14532d" strokeLinecap="round" fill="none" animate={isMouthOpen ? { d: "M38 75 Q50 85 62 75", strokeWidth: 4 } : isSwallowing ? { d: ["M38 75 Q50 80 62 75", "M38 75 Q50 83 62 75", "M38 75 Q50 80 62 75"], strokeWidth: 3, transition: { duration: 0.3, repeat: Infinity, ease: "easeInOut" } } : { d: "M38 75 Q50 80 62 75", strokeWidth: 3 }} />
-              {isFeeding && !showAccessGranted && (
-                 <motion.path d={tonguePath} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.1 }} />
+              {isFeeding && !showAccessGranted && tonguePath && (
+                 <motion.path d={tonguePath || "M50 75 Q50 75 50 75"} stroke="#ec4899" strokeWidth="4" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.1 }} />
               )}
               <circle cx="26" cy="68" r="5" fill="#f472b6" opacity="0.5" />
               <circle cx="74" cy="68" r="5" fill="#f472b6" opacity="0.5" />
@@ -1018,12 +1036,18 @@ const SkillsCarousel = ({ skills, onClick }: { skills: any[], onClick: (skill: a
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const isDragging = useRef(false); // FIX: Ref to track drag state vs click
 
   useEffect(() => {
+    // FIX: Hydration safe check
     const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize(); // Initial check
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    if (typeof window !== "undefined") {
+        handleResize();
+        window.addEventListener('resize', handleResize);
+    }
+    return () => {
+        if (typeof window !== "undefined") window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   // Auto scroll - Faster duration (2000ms)
@@ -1036,6 +1060,11 @@ const SkillsCarousel = ({ skills, onClick }: { skills: any[], onClick: (skill: a
   }, [skills.length, isPaused]);
 
   const handleDragEnd = (event: any, info: PanInfo) => {
+    // FIX: reset drag state slightly after drop to prevent click firing
+    setTimeout(() => {
+        isDragging.current = false;
+    }, 50);
+
     // Lower threshold for easier swiping
     if (info.offset.x > 20) {
       setCurrentIndex((prev) => (prev - 1 + skills.length) % skills.length);
@@ -1117,14 +1146,16 @@ const SkillsCarousel = ({ skills, onClick }: { skills: any[], onClick: (skill: a
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.2}
+                onDragStart={() => { isDragging.current = true; }} // FIX: Set dragging state
                 onDragEnd={handleDragEnd}
                 onClick={() => {
+                  if (isDragging.current) return; // FIX: Prevent click if dragged
                   if (position === 'center') onClick(skill);
                   else setCurrentIndex(index);
                 }}
                 className="absolute w-[280px] sm:w-[320px] cursor-pointer"
                 style={{ 
-                   touchAction: 'pan-y'
+                    touchAction: 'pan-y'
                 }}
               >
                 {/* Card Content unchanged */}
@@ -1328,20 +1359,20 @@ const EnhancedPortfolioCard = ({ project, index, onClick }: any) => {
         }
       }}
       viewport={{ once: true, margin: "-50px" }}
-      className="relative rounded-2xl overflow-hidden cursor-pointer group bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 transition-all duration-300 backdrop-blur-sm"
+      className="relative rounded-2xl overflow-visible cursor-pointer group bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 transition-all duration-300 backdrop-blur-sm"
       onClick={() => onClick(project)}
       style={{
-        transformStyle: "preserve-3d",
+        transformStyle: "preserve-3d", // FIX: can conflict with overflow hidden
         perspective: "1000px"
       }}
     >
       {/* Glow effect on hover */}
       <motion.div 
-        className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
         initial={false}
       />
       
-      <div className="relative h-56 overflow-hidden">
+      <div className="relative h-56 overflow-hidden rounded-t-2xl">
         {/* Image with parallax effect */}
         <motion.div
           className="w-full h-full"
@@ -1400,7 +1431,7 @@ const EnhancedPortfolioCard = ({ project, index, onClick }: any) => {
       {/* Content with staggered children animation */}
       <AnimatePresence>
         <motion.div 
-          className="p-5"
+          className="p-5 rounded-b-2xl bg-slate-900/40"
           initial={false}
         >
           <motion.p 
@@ -2238,7 +2269,7 @@ export default function LandingPage() {
     { icon: 'Facebook', href: "https://www.facebook.com/share/1B4CzChc4e", label: "Facebook", src: "/sosmed/facebook.png" },
     { icon: 'X', href: "https://x.com/swakarsadigital", label: "X (Twitter)", src: "/sosmed/x.png" },
     { icon: 'Linkedin', href: "https://www.linkedin.com/in/swakarsa-digital-65a651379", label: "LinkedIn", src: "/sosmed/linkedIn.png" },
-    { icon: 'GitHub', href: "https://github.com/rmyonathan", label: "GitHub", src: "/sosmed/github.png" },
+    { icon: 'GitHub', href: "https://github.com/SwakarsaDigital", label: "GitHub", src: "/sosmed/github.png" },
   ];
 
   return (
@@ -2252,7 +2283,7 @@ export default function LandingPage() {
         <OceanWaves />
         <CyberWhale />
         <CyberFrog />
-        <div className="container relative z-10 px-4 sm:px-6 text-center">
+        <div className="container relative z-20 px-4 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -2710,12 +2741,12 @@ export default function LandingPage() {
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                     <Button size="lg" className="shadow-2xl shadow-cyan-500/40">
-                        <a href="/contact" className="flex items-center gap-2">
+                        <a href="https://mail.google.com/mail/u/0/?view=cm&fs=1&to=swakarsadigital@gmail.com&su=Free%20Consultation%20Request&body=Hello%20Swakarsa%20Digital%2C%0A%0AI%20would%20like%20to%20book%20a%20free%20consultation%20to%20discuss%20my%20website%20and%20marketing%20needs.%0A%0APlease%20let%20me%20know%20your%20availability.%0A%0AThank%20you%21" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                              Book Free Consultation
                         </a>
                     </Button>
                     <Button size="lg" variant="outline">
-                        <a href="mailto:swakarsadigital@gmail.com" className="flex items-center gap-2">
+                        <a href="https://mail.google.com/mail/u/0/?view=cm&fs=1&to=swakarsadigital@gmail.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                              Send Email
                         </a>
                     </Button>
@@ -2745,7 +2776,7 @@ export default function LandingPage() {
                         className="w-8 h-8 rounded-lg"
                         onError={(e: any) => {
                             e.target.onerror = null;
-                            e.target.src = "/trust/maju mobilindo.jpeg";
+                            e.target.src = "https://placehold.co/32x32/333/FFF?text=S";
                         }}
                     />
                     <span className="font-bold text-lg text-white">
