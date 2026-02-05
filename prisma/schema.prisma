@@ -17,31 +17,31 @@ model User {
   password      String?
   role          String    @default("USER")
 
-  accounts      Account[]
-  sessions      Session[]
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  accounts Account[]
+  sessions Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // --- MODEL BLOG POST ---
 model BlogPost {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  excerpt     String?  @db.Text
-  content     String   @db.Text
-  imageUrl    String?
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  excerpt   String?  @db.Text
+  content   String   @db.Text
+  imageUrl  String?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // FIELD BARU: Penulis & Kategori
-  author      String?  @default("Admin")
-  category    String?  @default("Umum")
-  
-  ctaText     String?
-  ctaLink     String?
+  author   String? @default("Admin")
+  category String? @default("Umum")
+
+  ctaText String?
+  ctaLink String?
 }
 
 // --- MODEL KONTAK ---
@@ -56,18 +56,18 @@ model ContactMessage {
 
 // --- NEXTAUTH BOILERPLATE ---
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -88,4 +88,12 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  name      String
+  role      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
 }
