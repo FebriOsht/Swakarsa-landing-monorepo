@@ -18,7 +18,7 @@ export default async function PlatformLayout({
   return (
     <div className="flex min-h-screen bg-slate-950 text-white">
       {/* Sidebar Kiri (Fixed position diurus di dalam komponen Sidebar) */}
-      <Sidebar user={session.user} />
+      <Sidebar user={session.user as any} />
 
       {/* Konten Utama Kanan */}
       {/* lg:ml-64 penting agar konten geser ke kanan saat sidebar muncul di desktop */}

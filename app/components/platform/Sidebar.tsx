@@ -3,8 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, PenTool, FileText, Settings, LogOut, Layers } from 'lucide-react';
+import React from "react";
 
-export default function Sidebar() {
+type SidebarProps = {
+  user?: any;
+};
+
+export default function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
   
   const menuItems = [
