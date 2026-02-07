@@ -386,6 +386,7 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }: any) => {
     { name: "Blog", href: "/blog" },
     { name: "Services", href: "#services" },
     { name: "Portfolio", href: "#portfolio" },
+    { name: "Custom ERP", href: "/custom-erp" },
   ];
 
   return (
@@ -2524,6 +2525,14 @@ export default function LandingPage() {
                 </p>
               </div>
             </div>
+          </motion.div>
+          {/* CUSTOM ERP CTA BUTTON - MOVED BELOW SERVICES AS REQUESTED */}
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-12 text-center">
+            <a href="/custom-erp" className="inline-block">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white border-none shadow-xl shadow-blue-500/20 group">
+                Explore Custom Software & ERP Solutions <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </a>
           </motion.div>
         </motion.div>
       </section>

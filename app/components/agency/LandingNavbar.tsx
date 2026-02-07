@@ -25,6 +25,7 @@ export default function LandingNavbar({ mobileMenuOpen, setMobileMenuOpen }: Lan
     { name: "Team", href: "#team" },
     { name: "Blog", href: "/blog" },
     { name: "Contact", href: "#contact" },
+    { title: "Custom ERP", href: "/custom-erp" },
   ];
 
   return (
