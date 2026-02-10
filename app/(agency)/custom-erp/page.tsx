@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Code2, 
   Settings2, 
@@ -20,22 +20,27 @@ import {
   Search,
   PenTool,
   Server,
-  DollarSign
+  DollarSign,
+  ChevronDown,
+  PlayCircle,
+  LayoutGrid
 } from 'lucide-react';
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 
 /**
  * Technical Note: Using standard <a> tags for compatibility with the preview environment.
  */
-const Link = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-  <a href={href} className={className}>{children}</a>
+const Link = ({ href, children, className, onClick }: { href: string; children: React.ReactNode; className?: string; onClick?: () => void }) => (
+  <a href={href} className={className} onClick={onClick}>{children}</a>
 );
 
-// --- Internal Navbar Component (Updated to match Main Navbar) ---
+// --- Internal Navbar Component (Updated with Dropdown) ---
 const InternalNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [erpDropdownOpen, setErpDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
 
   // Handle mounting to prevent hydration mismatch
@@ -46,6 +51,17 @@ const InternalNavbar = () => {
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 50);
   });
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setErpDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -88,16 +104,71 @@ const InternalNavbar = () => {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center bg-slate-900/50 rounded-full px-2 p-1 border border-white/5 backdrop-blur-md">
-           {navLinks.map((link) => (
-             <Link
-               key={link.name}
-               href={link.href}
-               className="px-5 py-2 text-sm font-medium text-slate-400 hover:text-white transition-all hover:bg-white/5 rounded-full relative group"
-             >
-               {link.name}
-               <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-cyan-400 transition-all group-hover:w-1/2 opacity-0 group-hover:opacity-100" />
-             </Link>
-           ))}
+           {navLinks.map((link) => {
+             if (link.name === "Custom ERP") {
+               return (
+                 <div className="relative" key={link.name} ref={dropdownRef}>
+                    <button
+                      onClick={() => setErpDropdownOpen(!erpDropdownOpen)}
+                      className={`px-5 py-2 text-sm font-medium transition-all hover:bg-white/5 rounded-full relative group flex items-center gap-1 ${erpDropdownOpen ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white'}`}
+                    >
+                      {link.name}
+                      <ChevronDown size={14} className={`transition-transform duration-300 ${erpDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {erpDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute top-full right-0 mt-4 w-60 bg-slate-900 border border-white/10 rounded-2xl shadow-xl shadow-cyan-900/10 overflow-hidden z-50 p-1"
+                        >
+                           <Link 
+                              href="/custom-erp" 
+                              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                              onClick={() => setErpDropdownOpen(false)}
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
+                                <LayoutGrid size={16} />
+                              </div>
+                              <div>
+                                <div className="text-sm font-semibold text-white">Overview</div>
+                                <div className="text-xs text-slate-400">Custom ERP Solutions</div>
+                              </div>
+                            </Link>
+                            <Link 
+                              href="/custom-erp/demo" 
+                              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                              onClick={() => setErpDropdownOpen(false)}
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                                <PlayCircle size={16} />
+                              </div>
+                              <div>
+                                <div className="text-sm font-semibold text-white">Live Demo</div>
+                                <div className="text-xs text-slate-400">View Live Video Demo</div>
+                              </div>
+                            </Link>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                 </div>
+               );
+             }
+
+             return (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="px-5 py-2 text-sm font-medium text-slate-400 hover:text-white transition-all hover:bg-white/5 rounded-full relative group"
+              >
+                {link.name}
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-cyan-400 transition-all group-hover:w-1/2 opacity-0 group-hover:opacity-100" />
+              </Link>
+             );
+           })}
         </div>
 
         {/* Desktop CTA */}
@@ -126,19 +197,46 @@ const InternalNavbar = () => {
          className="md:hidden overflow-hidden bg-slate-950 border-b border-white/10"
       >
          <div className="px-6 py-6 space-y-4">
-            {navLinks.map((link) => (
+            {navLinks.map((link) => {
+              if (link.name === "Custom ERP") {
+                return (
+                  <div key={link.name} className="space-y-2">
+                    <div className="text-lg font-medium text-cyan-400">Custom ERP</div>
+                    <div className="pl-4 flex flex-col gap-3 border-l border-white/10 ml-1">
+                      <Link 
+                        href="/custom-erp"
+                        className="flex items-center gap-2 text-slate-400 hover:text-white"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                         <LayoutGrid size={16} /> Overview
+                      </Link>
+                      <Link 
+                        href="/custom-erp/demo"
+                        className="flex items-center gap-2 text-slate-400 hover:text-white"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                         <PlayCircle size={16} /> Live Demo Video
+                      </Link>
+                    </div>
+                  </div>
+                );
+              }
+              return (
                <Link 
                  key={link.name} 
                  href={link.href} 
                  className="block text-lg font-medium text-slate-400 hover:text-cyan-400"
+                 onClick={() => setMobileMenuOpen(false)}
                >
                  {link.name}
                </Link>
-            ))}
+              );
+            })}
             <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent my-2"></div>
             <Link 
               href="/contact"
               className="block text-lg font-medium px-4 py-2 rounded-lg text-center transition-colors bg-cyan-500/10 text-white hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-500/50"
+              onClick={() => setMobileMenuOpen(false)}
             >
               Let's Talk
             </Link>
@@ -326,6 +424,45 @@ export default function CustomERPPage() {
             >
               Review Case Studies
             </Link>
+          </div>
+        </section>
+
+        {/* --- VIDEO DEMO SECTION (UPDATED - SMALLER) --- */}
+        <section className="container mx-auto px-6 mb-28">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+                <PlayCircle className="text-cyan-400" size={20} /> 
+                See It In Action
+              </h2>
+              <p className="text-slate-400 text-sm">
+                Experience the fluidity and power of our custom HRIS & Recruitment System.
+              </p>
+            </div>
+            
+            <div className="relative w-full rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(34,211,238,0.1)] border border-slate-800 bg-slate-950 aspect-video group">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/EQGC5LRnlkU?autoplay=1&mute=1&loop=1&playlist=EQGC5LRnlkU&rel=0&controls=1"
+                title="Custom HRIS & Recruitment System Demo"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute top-0 left-0 w-full h-full"
+              ></iframe>
+              
+              {/* Optional: Overlay gradient for better integration */}
+              <div className="absolute inset-0 pointer-events-none rounded-2xl ring-1 ring-white/10 shadow-inner"></div>
+            </div>
+            
+            <div className="flex justify-center mt-6">
+                <Link 
+                  href="/custom-erp/demo" 
+                  className="text-sm font-medium text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors"
+                >
+                  Watch Full Demo with Details <ArrowRight size={14} />
+                </Link>
+            </div>
           </div>
         </section>
 

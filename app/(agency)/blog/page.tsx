@@ -1,9 +1,14 @@
 import { getBlogPosts } from "@/app/lib/blog-actions";
 import Link from "next/link";
 import { BlogPost } from "@prisma/client";
-import Navbar from "@/app/components/agency/Navbar"; // Changed from named to default import
+import Navbar from "@/app/components/agency/Navbar"; 
 import { Footer } from "@/app/components/agency/SectionComponents";
 import { ArrowRight, Calendar, User } from "lucide-react";
+
+// 1. TAMBAHAN PENTING: Paksa halaman ini dirender ulang setiap request
+// Ini mencegah Next.js menampilkan halaman "kosong" yang tersimpan di cache
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
   title: "Wawasan & Artikel | Swakarsa Digital",
@@ -77,27 +82,27 @@ export default async function BlogPage() {
                       
                       {/* Category Badge */}
                       {post.category && (
-                         <div className="absolute top-4 left-4">
-                            <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10 rounded-full">
+                          <div className="absolute top-4 left-4">
+                             <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10 rounded-full">
                                {post.category}
-                            </span>
-                         </div>
+                             </span>
+                          </div>
                       )}
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 p-6 flex flex-col">
                       <div className="flex items-center gap-4 text-xs text-slate-400 mb-3">
-                         <span className="flex items-center gap-1.5">
+                          <span className="flex items-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5 text-cyan-500" />
                             {formatDate(post.createdAt)}
-                         </span>
-                         {post.author && (
+                          </span>
+                          {post.author && (
                              <span className="flex items-center gap-1.5">
                                 <User className="w-3.5 h-3.5 text-cyan-500" />
                                 {post.author}
                              </span>
-                         )}
+                          )}
                       </div>
 
                       <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors line-clamp-2">
@@ -123,6 +128,8 @@ export default async function BlogPage() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Belum ada artikel</h3>
                 <p className="text-slate-400">Nantikan update terbaru dari tim kami segera.</p>
+                {/* Debugging: Tampilkan pesan ini untuk memastikan kode berjalan */}
+                <p className="text-xs text-slate-600 mt-4">Database Empty or Fetch Error</p>
               </div>
             )}
          </div>

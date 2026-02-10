@@ -1,11 +1,12 @@
 import { getBlogPosts, deleteBlogPost } from "@/app/lib/blog-actions";
 import Link from "next/link";
 import { FileText, Eye, CheckCircle, PlusCircle, Edit, Trash2 } from "lucide-react";
+import BulkImportButton from "@/components/bulk-import-button"; // Pastikan path ini sesuai lokasi file komponen Anda
 
 export default async function AdminDashboard() {
   const posts = await getBlogPosts();
   const publishedCount = posts.filter(p => p.published).length;
-  // Simulasi views (tetap dipertahankan sesuai kode asli)
+  // Simulasi views
   const totalViews = posts.length * 124; 
 
   return (
@@ -21,13 +22,20 @@ export default async function AdminDashboard() {
               <h1 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard Overview</h1>
               <p className="text-slate-500 font-medium">Selamat datang kembali! Berikut ringkasan performa blog Anda.</p>
             </div>
-            <Link 
-              href="/admin/blog/create"
-              className="group inline-flex items-center px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 hover:-translate-y-0.5"
-            >
-              <PlusCircle className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-              Tulis Artikel Baru
-            </Link>
+            
+            <div className="flex items-center gap-3">
+              {/* Tombol Bulk Import Baru */}
+              <BulkImportButton />
+
+              {/* Tombol Create Existing */}
+              <Link 
+                href="/admin/blog/create"
+                className="group inline-flex items-center px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 hover:-translate-y-0.5"
+              >
+                <PlusCircle className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                Tulis Artikel Baru
+              </Link>
+            </div>
           </div>
 
           {/* Stats Grid */}
@@ -96,9 +104,12 @@ export default async function AdminDashboard() {
                 <p className="text-slate-500 mb-8 text-sm max-w-sm mx-auto leading-relaxed">
                   Artikel yang kamu buat akan muncul di sini. Mulai tulis artikel pertamamu sekarang untuk menjangkau pembaca.
                 </p>
-                <Link href="/admin/blog/create" className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all text-sm font-semibold shadow-md shadow-blue-200">
-                  Buat Artikel Pertama
-                </Link>
+                <div className="flex gap-3">
+                  <BulkImportButton />
+                  <Link href="/admin/blog/create" className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all text-sm font-semibold shadow-md shadow-blue-200">
+                    Buat Artikel Pertama
+                  </Link>
+                </div>
               </div>
             ) : (
               <div className="overflow-x-auto w-full">
