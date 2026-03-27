@@ -8,6 +8,7 @@ const clientLogos = [
   { name: "FEIXEN XIAO GROUP", src: "/trust/feixen xiao group.jpeg" },
   { name: "HOTEL DWIPA", src: "/trust/hotel dwipa.jpeg" },
   { name: "MAJU MOBILINDO", src: "/trust/maju mobilindo.jpeg" },
+  { name: "COSIEN", src: "/trust/cosien.jpeg" },
 ];
 
 export default function ClientLogos() {

@@ -453,7 +453,61 @@ export default function PortfolioPage() {
       ],
       techStack: ["Python", "Scrapy", "React", "PostgreSQL", "Redis", "Celery"],
       tags: ["Web Scraping", "Data", "Automation", "Analytics"]
-    }
+    },
+    {
+      id: 9,
+      title: "PT Gatha Gemilang Global",
+      category: "Corporate Website",
+      client: "PT Gatha Gemilang Global (GGG)",
+      image: "/portfolio/gggindonesia.png", // Pastikan nama file gambarnya sesuai
+      shortDescription: "Premium corporate website for a global export trading company.",
+      description: "A professional, high-end corporate presence built for PT Gatha Gemilang Global, an international export trading company. The platform features a dynamic blog and a custom admin dashboard to streamline content management and showcase global export operations to international partners. Visit: https://gggindonesia.com",
+      duration: "4 Weeks",
+      challenges: [
+        "Establishing a premium, trustworthy digital identity for international trade",
+        "Building a custom admin dashboard for easy content updates",
+        "Optimizing performance for global accessibility"
+      ],
+      solutions: [
+        "Implemented a sleek, modern UI/UX reflecting global standards",
+        "Developed a robust CMS/Admin panel for seamless blog and content management",
+        "Utilized Next.js for superior SEO and fast global loading speeds"
+      ],
+      results: [
+        { value: "Premium", label: "Brand Identity" },
+        { value: "Fast", label: "Global Load Time" },
+        { value: "Custom", label: "Admin Dashboard" }
+      ],
+      techStack: ["Next.js", "Tailwind CSS", "PostgreSQL", "React"],
+      tags: ["Corporate", "Export", "CMS", "Dashboard"]
+    },
+    {
+      id: 10,
+      title: "Anugerah Rekanan Bersama",
+      category: "Company Profile",
+      client: "Anugerah Rekanan Bersama (AM ARB)",
+      image: "/portfolio/arb.png", // Pastikan nama file gambarnya sesuai
+      shortDescription: "Modern company profile and digital presence to establish credibility.",
+      description: "A comprehensive company profile website designed to highlight the services and expertise of Anugerah Rekanan Bersama. The site focuses on clear navigation, professional aesthetics, and strong calls-to-action to facilitate client inquiries effectively. Visit: https://anugerahrekananbersama.site",
+      duration: "3 Weeks",
+      challenges: [
+        "Creating a clear, engaging presentation of services",
+        "Ensuring high responsiveness across all devices",
+        "Building trust through modern digital design"
+      ],
+      solutions: [
+        "Designed an intuitive, mobile-first interface",
+        "Integrated optimized media and fast-loading pages",
+        "Implemented strategic contact points for lead generation"
+      ],
+      results: [
+        { value: "100%", label: "Responsive" },
+        { value: "High", label: "User Engagement" },
+        { value: "Clear", label: "Brand Messaging" }
+      ],
+      techStack: ["Next.js", "Tailwind CSS", "React"],
+      tags: ["Company Profile", "B2B", "Responsive"]
+    },
   ];
 
   const handleProjectClick = (project: any) => {

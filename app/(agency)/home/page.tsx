@@ -1826,6 +1826,7 @@ const clientLogos = [
   { name: "HOTEL DWIPA", src: "/trust/hotel dwipa.jpeg" },
   { name: "MAJU MOBILINDO", src: "/trust/maju mobilindo.jpeg" },
   { name: "RESILIO PARTNERS", src: "/trust/resilio-logo.png" },
+  { name: "COSIEN", src: "/trust/cosien.jpeg" },
 ];
 
 const ClientLogosSection = ({ logos }: any) => (
